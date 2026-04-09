@@ -1,0 +1,43 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper to get user data
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // Helper to check multi-tenancy
+    function isSameTenant(resourceTenantId) {
+      return request.auth != null && getUserData().tenantId == resourceTenantId;
+    }
+
+    // Tenant isolation
+    match /tenants/{tenantId} {
+      allow read: if isSameTenant(tenantId);
+      allow write: if request.auth != null && getUserData().role == 'ADMIN' && getUserData().tenantId == tenantId;
+    }
+
+    // User profiles
+    match /users/{userId} {
+      allow read: if request.auth != null && (request.auth.uid == userId || getUserData().tenantId == resource.data.tenantId);
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Change Requests (RFCs)
+    match /change_requests/{rfcId} {
+      allow read: if isSameTenant(resource.data.tenantId);
+      allow create: if request.auth != null && getUserData().tenantId == request.resource.data.tenantId;
+      allow update: if isSameTenant(resource.data.tenantId);
+      allow delete: if false; // Compliance: no deletion
+    }
+
+    // Audit Logs
+    match /audit_logs/{logId} {
+      allow read: if isSameTenant(resource.data.tenantId);
+      allow create: if request.auth != null; // Ideally created by service account, but guard for safety
+      allow update, delete: if false; // Immutable logs
+    }
+  }
+}
