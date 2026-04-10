@@ -18,13 +18,22 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/change-control")
-@RequiredArgsConstructor
 public class ChangeControlViewController {
 
     private final ChangeRequestRepository changeRequestRepository;
     private final ChangeControlService changeControlService;
     private final ImpactAnalysisRepository impactAnalysisRepository;
     private final AreaConfigRepository areaConfigRepository;
+
+    public ChangeControlViewController(ChangeRequestRepository changeRequestRepository, 
+                                       ChangeControlService changeControlService, 
+                                       ImpactAnalysisRepository impactAnalysisRepository, 
+                                       AreaConfigRepository areaConfigRepository) {
+        this.changeRequestRepository = changeRequestRepository;
+        this.changeControlService = changeControlService;
+        this.impactAnalysisRepository = impactAnalysisRepository;
+        this.areaConfigRepository = areaConfigRepository;
+    }
 
     @GetMapping
     public String listChanges(Model model) {

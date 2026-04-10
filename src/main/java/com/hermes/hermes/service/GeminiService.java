@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class GeminiService {
 
     @Value("${gemini.api.key}")
@@ -25,6 +24,10 @@ public class GeminiService {
     private String defaultApiUrl;
 
     private final SettingsService settingsService;
+
+    public GeminiService(SettingsService settingsService) {
+        this.settingsService = settingsService;
+    }
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 

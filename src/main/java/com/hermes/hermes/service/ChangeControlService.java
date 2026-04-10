@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class ChangeControlService {
 
     private final ChangeRequestRepository changeRequestRepository;
@@ -27,6 +26,28 @@ public class ChangeControlService {
     private final PushNotificationService pushNotificationService;
     private final ApplicationContext applicationContext;
     private final UserRepository userRepository;
+
+    public ChangeControlService(ChangeRequestRepository changeRequestRepository, 
+                                ImpactAnalysisRepository impactAnalysisRepository, 
+                                ImpactSubAreaRepository impactSubAreaRepository, 
+                                ActionPlanTaskRepository actionPlanTaskRepository, 
+                                EffectivenessEvaluationRepository effectivenessEvaluationRepository, 
+                                AreaConfigRepository areaConfigRepository, 
+                                PushSubscriptionRepository pushSubscriptionRepository, 
+                                PushNotificationService pushNotificationService, 
+                                ApplicationContext applicationContext, 
+                                UserRepository userRepository) {
+        this.changeRequestRepository = changeRequestRepository;
+        this.impactAnalysisRepository = impactAnalysisRepository;
+        this.impactSubAreaRepository = impactSubAreaRepository;
+        this.actionPlanTaskRepository = actionPlanTaskRepository;
+        this.effectivenessEvaluationRepository = effectivenessEvaluationRepository;
+        this.areaConfigRepository = areaConfigRepository;
+        this.pushSubscriptionRepository = pushSubscriptionRepository;
+        this.pushNotificationService = pushNotificationService;
+        this.applicationContext = applicationContext;
+        this.userRepository = userRepository;
+    }
 
     // =========================================================
     // CRIAÇÃO E GESTÃO DO CM

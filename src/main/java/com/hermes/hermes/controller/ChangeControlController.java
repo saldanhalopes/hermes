@@ -15,11 +15,16 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/change-control")
-@RequiredArgsConstructor
 public class ChangeControlController {
 
     private final ChangeControlService changeControlService;
     private final GeminiService geminiService;
+
+    public ChangeControlController(ChangeControlService changeControlService, 
+                                   GeminiService geminiService) {
+        this.changeControlService = changeControlService;
+        this.geminiService = geminiService;
+    }
 
     @PostMapping("/requests")
     public ResponseEntity<ChangeRequest> createRequest(@RequestBody ChangeRequest request) {

@@ -10,12 +10,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AreaConfigRepository areaConfigRepository;
+
+    public DataInitializer(UserRepository userRepository, 
+                           PasswordEncoder passwordEncoder, 
+                           AreaConfigRepository areaConfigRepository) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.areaConfigRepository = areaConfigRepository;
+    }
 
     @Override
     public void run(String... args) {
