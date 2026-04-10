@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Impacto em Ativos - CM09</title>
+</head>
+<body>
+
+<div layout:fragment="page-title">
+    Descrição de Materiais e Equipamentos (CM09)
+</div>
+
+<div layout:fragment="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-info card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">Ativos Afetados pela Mudança</h3>
+                    <div class="card-tools">
+                        <button class="btn btn-sm btn-info"><i class="fas fa-plus mr-1"></i> Adicionar Ativo</button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Nome do Ativo</th>
+                            <th>Código / TAG</th>
+                            <th>Descrição do Impacto</th>
+                            <th>Requalificação?</th>
+                            <th>Ações</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Equipamento</td>
+                            <td>Balança Analítica Mettler</td>
+                            <td>EQ-LAB-045</td>
+                            <td>Update de firmware do sistema de pesagem</td>
+                            <td><span class="badge badge-success">Sim</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-default text-danger"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Software</td>
+                            <td>LIMS v4.2</td>
+                            <td>SW-IT-01</td>
+                            <td>Alteração de interface de integração</td>
+                            <td><span class="badge badge-secondary">Não</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-default text-danger"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

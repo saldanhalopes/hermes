@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/main}">
+<head>
+    <title>Formulário de Usuário - Hermes</title>
+    <style>
+        .form-glass-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 0;
+            min-height: calc(100vh - 150px);
+        }
+
+        .glass-form-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .form-label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            padding: 0.75rem 1rem;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+            color: white;
+        }
+
+        .form-control::placeholder {
+            color: #475569;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            color: white;
+            border: none;
+            padding: 0.875rem;
+            border-radius: 10px;
+            font-weight: 700;
+            width: 100%;
+            margin-top: 1.5rem;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.5);
+            color: white;
+        }
+
+        .btn-cancel {
+            display: block;
+            text-align: center;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.875rem;
+            margin-top: 1.25rem;
+            transition: color 0.2s;
+        }
+
+        .btn-cancel:hover {
+            color: white;
+        }
+
+        .input-icon-wrapper {
+            position: relative;
+        }
+
+        .input-icon-wrapper i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #475569;
+        }
+
+        .input-icon-wrapper .form-control {
+            padding-left: 2.75rem;
+        }
+
+        .error-alert {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.2);
+            color: #f87171;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="form-glass-container">
+        <div class="glass-form-card">
+            <h1 class="form-title">
+                <i th:classappend="${user.id == null || user.id.isEmpty() ? 'fas fa-user-plus' : 'fas fa-user-edit'}"></i>
+                <span th:text="${user.id == null || user.id.isEmpty() ? 'Novo Usuário' : 'Editar Usuário'}">Formulário</span>
+            </h1>
+
+            <div th:if="${param.error}" class="error-alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Erro: <strong th:text="${param.error}">Erro</strong></span>
+            </div>
+
+            <form th:action="@{/users}" th:object="${user}" method="post">
+                <input type="hidden" th:field="*{id}" />
+                
+                <div class="mb-4">
+                    <label for="username" class="form-label">Nome de Usuário</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input type="text" th:field="*{username}" class="form-control" required placeholder="Ex: joao.silva" />
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="email" class="form-label">Endereço de Email</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" th:field="*{email}" class="form-control" required placeholder="email@hermes.com" />
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label">Senha de Acesso</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" th:field="*{password}" class="form-control" 
+                               th:required="${user.id == null || user.id.isEmpty()}" placeholder="••••••••" />
+                    </div>
+                    <small th:if="${user.id != null && !user.id.isEmpty()}" class="text-muted d-block mt-1" style="font-size: 0.7rem;">
+                        Deixe em branco para manter a senha atual.
+                    </small>
+                </div>
+
+                <div class="mb-4">
+                    <label for="role" class="form-label">Nível de Acesso (Papel)</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-shield-alt"></i>
+                        <select th:field="*{role}" class="form-select" style="padding-left: 2.75rem;">
+                            <option value="ROLE_USER">Usuário Comum (Visualização)</option>
+                            <option value="ROLE_ADMIN">Administrador (Total)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-save mr-2"></i> Salvar Usuário
+                </button>
+                
+                <a href="/users" class="btn-cancel">
+                    Cancelar e Voltar
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

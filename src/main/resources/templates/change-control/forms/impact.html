@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Avaliação: [[${analysis.areaName}]] - CM [[${request.cmNumber}]]</title>
+    <style>
+        .proposal-summary {
+            background: #f8f9fa;
+            border-left: 4px solid #0056b3;
+            transition: all 0.3s ease;
+        }
+        .proposal-summary:hover {
+            background: #f1f3f5;
+        }
+        .section-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #495057;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .section-title i { margin-right: 10px; color: #0056b3; }
+        
+        .sub-area-card {
+            border: 1px solid #dee2e6;
+            border-left: 4px solid #6c757d;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            background: #fff;
+            transition: transform 0.2s ease;
+        }
+        .sub-area-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .evaluation-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        }
+        .evaluation-card .card-header {
+            background: linear-gradient(135deg, #212529 0%, #343a40 100%);
+            border-radius: 15px 15px 0 0 !important;
+        }
+        
+        .ai-btn {
+            background: linear-gradient(135deg, #6610f2 0%, #007bff 100%);
+            color: white;
+            border: none;
+        }
+        .ai-btn:hover {
+            filter: brightness(1.1);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div layout:fragment="page-title">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0" style="font-size: 0.9rem;">
+            <li class="breadcrumb-item"><a th:href="@{/change-control/{id}(id=${request.id})}">[[${request.cmNumber}]]</a></li>
+            <li class="breadcrumb-item active">Avaliação de Impacto</li>
+            <li class="breadcrumb-item active text-primary fw-bold" th:text="${analysis.areaName}">Área</li>
+        </ol>
+    </nav>
+</div>
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-9">
+                <!-- Resumo da Proposta (Colapsável) -->
+                <div class="card mb-4 border-0 shadow-sm overflow-hidden">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center cursor-pointer" 
+                         data-bs-toggle="collapse" data-bs-target="#proposalCollapse" aria-expanded="false">
+                        <h6 class="mb-0 fw-bold"><i class="fas fa-info-circle text-primary me-2"></i>Resumo da Proposta de Mudança</h6>
+                        <i class="fas fa-chevron-down text-muted"></i>
+                    </div>
+                    <div id="proposalCollapse" class="collapse">
+                        <div class="card-body bg-light border-top">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="small fw-bold text-muted text-uppercase mb-2">Situação Atual</div>
+                                    <div class="p-3 bg-white border rounded small text-secondary" style="white-space: pre-wrap;" th:text="${request.currentSituation}">...</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="small fw-bold text-muted text-uppercase mb-2">Situação Proposta</div>
+                                    <div class="p-3 bg-white border border-primary-subtle rounded small" style="white-space: pre-wrap;" th:text="${request.proposedSituation}">...</div>
+                                </div>
+                                <div class="col-12" th:if="${not #strings.isEmpty(request.justification)}">
+                                    <div class="small fw-bold text-muted text-uppercase mb-2">Justificativa</div>
+                                    <div class="p-2 px-3 bg-white border rounded small fst-italic text-muted" th:text="${request.justification}">...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card evaluation-card mb-5">
+                    <div class="card-header py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0 text-white"><i class="fas fa-microscope me-2"></i>Parecer Técnico: [[${analysis.areaName}]]</h5>
+                            <span class="badge bg-light text-dark fw-bold px-3 py-2">Fase de Avaliação</span>
+                        </div>
+                    </div>
+                    <div class="card-body p-4 p-md-5">
+                        <form id="formEvaluation">
+                            <input type="hidden" id="analysisId" th:value="${analysis.id}">
+                            
+                            <!-- Se tiver sub-áreas -->
+                            <div th:if="${not #lists.isEmpty(analysis.subAreas)}" class="mb-5">
+                                <div class="section-title"><i class="fas fa-tasks"></i>Impactos Detalhados por Sub-área</div>
+                                
+                                <div th:each="sub : ${analysis.subAreas}" class="card sub-area-card shadow-sm border-0">
+                                    <div class="card-body p-4">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <label class="form-label fw-bold mb-0 text-dark" th:text="${sub.subAreaName}">Sub-área</label>
+                                            <span class="badge bg-secondary-subtle text-secondary small">Avaliação Específica</span>
+                                        </div>
+                                        <textarea class="form-control sub-area-text border-0 bg-light-subtle" 
+                                                  th:data-sub-id="${sub.id}" 
+                                                  rows="3" 
+                                                  th:text="${sub.impactText}"
+                                                  placeholder="Descreva o impacto técnico nesta sub-área específica..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="section-title"><i class="fas fa-file-signature"></i>Conclusão e Parecer Decisório</div>
+                            
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label for="impactText" class="form-label fw-bold mb-0">Impacto Geral / Resumo Técnico</label>
+                                    <button type="button" class="btn btn-sm ai-btn rounded-pill px-3" id="btnAIAssist">
+                                        <i class="fas fa-magic me-1"></i> Sugerir com IA
+                                    </button>
+                                </div>
+                                <textarea class="form-control shadow-sm border-light" id="impactText" rows="6" 
+                                          th:text="${analysis.impactText}" 
+                                          placeholder="Descreva aqui o parecer técnico da sua área, justificando a decisão de aprovação ou reprovação..." required></textarea>
+                            </div>
+
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-4">
+                                    <div class="card bg-light border-0 p-3 h-100">
+                                        <label for="approvalStatus" class="form-label fw-bold text-primary mb-2">Decisão de Área</label>
+                                        <select class="form-select form-select-lg border-0 shadow-sm" id="approvalStatus" required>
+                                            <option value="" disabled th:selected="${analysis.approvalStatus == null}">Selecione...</option>
+                                            <option value="Sim" th:selected="${analysis.approvalStatus == 'Sim'}">SIM - Aprovado</option>
+                                            <option value="Não" th:selected="${analysis.approvalStatus == 'Não'}">NÃO - Reprovado</option>
+                                            <option value="Não Aplicável" th:selected="${analysis.approvalStatus == 'Não Aplicável'}">Não Aplicável</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-light border-0 p-3 h-100">
+                                        <label for="evaluatorName" class="form-label fw-bold mb-2">Responsável</label>
+                                        <input type="text" class="form-control border-0 shadow-sm" id="evaluatorName" 
+                                               th:value="${analysis.evaluatorName ?: #authentication.name}" placeholder="Nome do Avaliador">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-light border-0 p-3 h-100">
+                                        <label for="evaluationDate" class="form-label fw-bold mb-2">Data da Avaliação</label>
+                                        <input type="date" class="form-control border-0 shadow-sm" id="evaluationDate" 
+                                               th:value="${analysis.evaluationDate ?: #temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-warning border-0 bg-warning-subtle text-warning-emphasis d-flex align-items-center mb-5" th:if="${analysis.approvalStatus == 'Não'}">
+                                <i class="fas fa-exclamation-triangle me-3 fs-3"></i>
+                                <div>
+                                    <strong>Atenção:</strong> Ao marcar como "Não Aprovado", este CM será bloqueado para revisão técnica até que as pendências da sua área sejam sanadas.
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-5 pt-3 border-top">
+                                <button type="button" onclick="history.back()" class="btn btn-outline-secondary rounded-pill px-4">
+                                    <i class="fas fa-arrow-left me-2"></i> Voltar
+                                </button>
+                                <div>
+                                    <button type="submit" id="btnSaveOnly" class="btn btn-light rounded-pill px-4 me-2 border">Apenas Salvar</button>
+                                    <button type="submit" id="btnSaveAndForward" class="btn btn-primary rounded-pill px-5 shadow">
+                                        Finalizar Parecer <i class="fas fa-check-double ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3">
+                <div class="card shadow-sm border-0 mb-4 sticky-top" style="top: 20px;">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">Progresso Geral</h6>
+                        <div class="progress mb-2" style="height: 10px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 25%;"></div>
+                        </div>
+                        <div class="text-sm text-muted mb-4">Etapa 3 de 7: Avaliação Técnica</div>
+                        
+                        <div class="list-group list-group-flush small">
+                            <div class="list-group-item px-0 py-2 d-flex justify-content-between align-items-center">
+                                <span class="text-muted">Status do CM:</span>
+                                <span class="badge bg-primary-subtle text-primary rounded-pill" th:text="${request.status}">Status</span>
+                            </div>
+                            <div class="list-group-item px-0 py-2 d-flex justify-content-between align-items-center">
+                                <span class="text-muted">Unidade:</span>
+                                <span class="fw-bold">[[${request.unit}]]</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 p-3 bg-light rounded shadow-none border">
+                            <p class="small text-muted mb-0">
+                                <i class="fas fa-lightbulb text-warning me-2"></i>
+                                <strong>Dica:</strong> Se precisar solicitar novos documentos ou testes, descreva-os no parecer para que sejam incluídos no Plano de Ação.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="extra-scripts">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const requestId = [[${request.id}]];
+        const analysisId = [[${analysis.id}]];
+        const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+        document.getElementById('formEvaluation').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitter = e.submitter;
+            
+            // 1. Coletar e salvar sub-áreas
+            const subAreaElements = document.querySelectorAll('.sub-area-text');
+            const subAreaPromises = [];
+            
+            for (const el of subAreaElements) {
+                const subId = el.getAttribute('data-sub-id');
+                const text = el.value;
+                
+                const subHeaders = { 'Content-Type': 'application/json' };
+                if (csrfHeader && csrfToken) subHeaders[csrfHeader] = csrfToken;
+
+                subAreaPromises.push(fetch(`/api/change-control/sub-area/${subId}`, {
+                    method: 'PUT',
+                    headers: subHeaders,
+                    body: JSON.stringify({ impactText: text })
+                }));
+            }
+            
+            await Promise.all(subAreaPromises);
+
+            // 2. Salvar avaliação principal
+            const payload = {
+                impactText: document.getElementById('impactText').value,
+                approvalStatus: document.getElementById('approvalStatus').value,
+                evaluatorName: document.getElementById('evaluatorName').value,
+                evaluationDate: document.getElementById('evaluationDate').value
+            };
+
+            const headers = { 'Content-Type': 'application/json' };
+            if (csrfHeader && csrfToken) headers[csrfHeader] = csrfToken;
+
+            try {
+                Swal.fire({
+                    title: 'Processando...',
+                    didOpen: () => { Swal.showLoading(); }
+                });
+
+                const response = await fetch(`/api/change-control/impact/${analysisId}`, {
+                    method: 'PUT',
+                    headers: headers,
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    Swal.fire('Sucesso!', 'Avaliação registrada com sucesso.', 'success').then(() => {
+                        window.location.href = `/change-control/${requestId}`;
+                    });
+                } else {
+                    Swal.fire('Erro', 'Falha ao salvar: ' + await response.text(), 'error');
+                }
+            } catch (err) {
+                Swal.fire('Erro', 'Erro na comunicação.', 'error');
+            }
+        });
+
+        // Assistente de IA para o parecer
+        document.getElementById('btnAIAssist').addEventListener('click', async () => {
+            const prop = [[${request.proposedSituation}]];
+            const area = [[${analysis.areaName}]];
+            
+            Swal.fire({
+                title: 'Assistente Hermes',
+                text: `Gerando sugestão de parecer técnico para a área de ${area}...`,
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            
+            try {
+                const res = await fetch(`/api/change-control/ai-suggest?description=${encodeURIComponent(prop)}&area=${encodeURIComponent(area)}`);
+                const text = await res.text();
+                
+                Swal.fire({
+                    title: 'Sugestão da IA',
+                    html: `<div class="text-start p-3 bg-light rounded" style="font-size: 0.9rem;">${text.replace(/\n/g, '<br>')}</div>`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Usar Sugestão',
+                    cancelButtonText: 'Descartar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('impactText').value = text;
+                    }
+                });
+            } catch (e) {
+                Swal.fire('Erro', 'Não foi possível contatar a IA.', 'error');
+            }
+        });
+        /*]]>*/
+    </script>
+</th:block>
+
+</body>
+</html>

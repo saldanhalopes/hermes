@@ -1,0 +1,13 @@
+connectorId: example
+generate:
+  javascriptSdk:
+    - outputDir: ..\..\..\..\..\AppData\Local\Programs\Antigravity\resources\app\src\dataconnect-generated
+      package: "@dataconnect/generated"
+      packageJsonDir: ..\..\..\..\..\AppData\Local\Programs\Antigravity\resources\app
+      react: true
+      angular: false
+    - outputDir: ..\..\..\..\..\AppData\Local\Programs\Antigravity\_\resources\app\src\dataconnect-generated
+      package: "@dataconnect/generated"
+      packageJsonDir: ..\..\..\..\..\AppData\Local\Programs\Antigravity\_\resources\app
+      react: true
+      angular: false

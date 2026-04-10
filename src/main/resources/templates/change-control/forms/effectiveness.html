@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Verificação de Eficácia - CM [[${request.cmNumber}]]</title>
+</head>
+<body>
+
+<div layout:fragment="page-title">
+    Verificação de Eficácia do Controle de Mudança
+</div>
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-indigo text-white py-3" style="background-color: #6610f2;">
+                        <h5 class="card-title mb-0"><i class="fas fa-check-double me-2"></i>Avaliação Final de Eficácia</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="alert alert-light border-0 shadow-sm mb-4">
+                            <div class="small text-muted mb-1">Título do CM</div>
+                            <div class="fw-bold text-dark">[[${request.cmNumber}]] - [[${request.title}]]</div>
+                        </div>
+
+                        <form id="formEffectiveness">
+                            <div class="mb-4">
+                                <label for="evaluationText" class="form-label fw-bold">Descrição da Verificação</label>
+                                <textarea class="form-control" id="evaluationText" rows="8" 
+                                          th:text="${effectiveness?.evaluationText}"
+                                          placeholder="Descreva detalhadamente como foi verificada a eficácia desta mudança (ex: análise de lotes, monitoramento de parâmetros, ausência de desvios, etc)..." required></textarea>
+                                <div class="text-muted text-end small">Máximo 4000 caracteres</div>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="result" class="form-label fw-bold">Resultado da Mudança</label>
+                                    <select class="form-select form-select-lg border-2 border-indigo" id="result" required>
+                                        <option value="" disabled th:selected="${effectiveness == null}">Selecione o resultado...</option>
+                                        <option value="Eficaz" th:selected="${effectiveness?.result == 'Eficaz'}">Eficaz</option>
+                                        <option value="Não Eficaz" th:selected="${effectiveness?.result == 'Não Eficaz'}">Não Eficaz</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Avaliador Responsável</label>
+                                    <input type="text" class="form-control" id="evaluatedBy" th:value="${effectiveness?.evaluatedBy ?: #authentication.name}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Data da Verificação</label>
+                                    <input type="date" class="form-control" id="evaluationDate" th:value="${effectiveness?.evaluationDate ?: #temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" required>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end mt-5 pt-3 border-top">
+                                <a th:href="@{/change-control/{id}(id=${request.id})}" class="btn btn-link text-muted me-3">Voltar</a>
+                                <button type="submit" class="btn btn-indigo btn-lg rounded-pill px-5 shadow-sm text-white" style="background-color: #6610f2;">
+                                    Concluir e Encerrar CM <i class="fas fa-flag-checkered ms-2"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card bg-light border-0">
+                    <div class="card-body">
+                        <h6 class="text-muted small fw-bold">Importante</h6>
+                        <p class="small text-muted mb-0">
+                            A verificação de eficácia é a etapa final do ciclo de vida da GxP. Ao marcar como "Eficaz", o CM será encerrado automaticamente. 
+                            Caso a mudança seja considerada "Não Eficaz", um novo desvio ou CM corretivo deve ser aberto.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="extra-scripts">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const requestId = [[${request.id}]];
+        const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+        document.getElementById('formEffectiveness').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const payload = {
+                evaluationText: document.getElementById('evaluationText').value,
+                result: document.getElementById('result').value,
+                evaluatedBy: document.getElementById('evaluatedBy').value,
+                evaluationDate: document.getElementById('evaluationDate').value
+            };
+
+            const headers = { 'Content-Type': 'application/json' };
+            if (csrfHeader && csrfToken) headers[csrfHeader] = csrfToken;
+
+            try {
+                Swal.fire({
+                    title: 'Salvando Verificação...',
+                    didOpen: () => { Swal.showLoading(); }
+                });
+
+                const response = await fetch(`/api/change-control/requests/${requestId}/effectiveness`, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    Swal.fire('Sucesso', 'Verificação de eficácia registrada. CM Encerrado.', 'success').then(() => {
+                        window.location.href = `/change-control/${requestId}`;
+                    });
+                } else {
+                    Swal.fire('Erro', 'Falha ao salvar: ' + await response.text(), 'error');
+                }
+            } catch (err) {
+                Swal.fire('Erro', 'Erro na comunicação.', 'error');
+            }
+        });
+        /*]]>*/
+    </script>
+</th:block>
+
+</body>
+</html>

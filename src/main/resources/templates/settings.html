@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/main}">
+<head>
+    <title>Configurações do Sistema - Hermes</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Configurações do Sistema</h1>
+            </div>
+        </div>
+
+        <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show shadow-sm border-0 rounded-pill mb-4" role="alert">
+            <i class="fas fa-check-circle mr-2"></i> Configurações salvas com sucesso!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <!-- Siderbar-like navigation for Settings -->
+                <div class="card card-dark card-outline shadow-sm">
+                    <div class="card-body p-0">
+                        <ul class="nav nav-pills flex-column" id="settingsTabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="ai-tab" data-bs-toggle="pill" href="#ai-content" role="tab">
+                                    <i class="fas fa-brain mr-2"></i> Inteligência Artificial
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="notif-tab" data-bs-toggle="pill" href="#notif-content" role="tab">
+                                    <i class="fas fa-bell mr-2"></i> Notificações (VAPID)
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="gen-tab" data-bs-toggle="pill" href="#gen-content" role="tab">
+                                    <i class="fas fa-cog mr-2"></i> Geral & Ambiente
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card card-info card-outline shadow-sm mt-3">
+                    <div class="card-header">
+                        <h3 class="card-title text-sm"><i class="fas fa-shield-alt mr-2"></i>Segurança</h3>
+                    </div>
+                    <div class="card-body p-2">
+                        <p class="text-muted text-xs mb-0">
+                            Estas configurações são críticas. Alterações incorretas podem desativar os serviços de IA e notificações.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="card card-dark card-outline shadow-sm">
+                    <div class="card-body">
+                        <form th:action="@{/settings/update}" method="post">
+                            <div class="tab-content" id="settingsTabContent">
+                                
+                                <!-- AI Content -->
+                                <div class="tab-pane fade show active" id="ai-content" role="tabpanel">
+                                    <h5><i class="fas fa-robot mr-2 text-info"></i>Configuração Google Gemini</h5>
+                                    <p class="text-muted text-sm">Gerencie as credenciais para o motor de sugestões 5W2H.</p>
+                                    <hr>
+                                    
+                                    <div class="form-group mb-3">
+                                        <label for="geminiApiKey" class="form-label">API Key</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i class="fas fa-key"></i></span>
+                                            <input type="password" class="form-control" id="geminiApiKey" name="geminiApiKey" 
+                                                   th:value="${geminiApiKey}" placeholder="AIzaSy...">
+                                            <button class="btn btn-outline-secondary" type="button" id="toggleKey">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="geminiApiUrl" class="form-label">Endpoint URL</label>
+                                        <input type="text" class="form-control" id="geminiApiUrl" name="geminiApiUrl" 
+                                               th:value="${geminiApiUrl}">
+                                    </div>
+                                </div>
+
+                                <!-- Notifications Content -->
+                                <div class="tab-pane fade" id="notif-content" role="tabpanel">
+                                    <h5><i class="fas fa-paper-plane mr-2 text-warning"></i>Web Push (VAPID)</h5>
+                                    <p class="text-muted text-sm">Chaves necessárias para o serviço de Notificações em Tempo Real.</p>
+                                    <hr>
+                                    
+                                    <div class="form-group mb-3">
+                                        <label for="vapidPublicKey" class="form-label">VAPID Public Key</label>
+                                        <textarea class="form-control text-sm" id="vapidPublicKey" name="vapidPublicKey" rows="2" th:text="${vapidPublicKey}"></textarea>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="vapidPrivateKey" class="form-label">VAPID Private Key</label>
+                                        <input type="password" class="form-control" id="vapidPrivateKey" name="vapidPrivateKey" th:value="${vapidPrivateKey}">
+                                    </div>
+                                </div>
+
+                                <!-- General Content -->
+                                <div class="tab-pane fade" id="gen-content" role="tabpanel">
+                                    <h5><i class="fas fa-microchip mr-2 text-secondary"></i>Sistema & Ambiente</h5>
+                                    <hr>
+                                    
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <th style="width: 200px;">Nome da Aplicação:</th>
+                                            <td th:text="${@environment.getProperty('spring.application.name')}">hermes</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Perfil Ativo:</th>
+                                            <td><span class="badge bg-success" th:text="${@environment.getProperty('spring.profiles.active')}">dev</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Versão:</th>
+                                            <td>2026.4.1-STABLE</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Server Time:</th>
+                                            <td th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm:ss')}"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-3 border-top">
+                                <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                                    <i class="fas fa-save mr-2"></i> Salvar Configurações
+                                </button>
+                                <button type="reset" class="btn btn-link text-muted">Descartar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="extra-scripts">
+    <script>
+        document.getElementById('toggleKey').addEventListener('click', function() {
+            const input = document.getElementById('geminiApiKey');
+            const icon = this.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

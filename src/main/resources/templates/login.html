@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hermes | Log in</title>
+
+    <!-- Google Font: Outfit -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap">
+    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.5.1/css/all.min.css}">
+    <!-- Theme style (AdminLTE 4) -->
+    <link rel="stylesheet" th:href="@{/webjars/admin-lte/4.0.0-beta1/dist/css/adminlte.min.css}">
+    
+    <style>
+        :root {
+            --hermes-primary: #6366f1;
+            --hermes-dark: #0f172a;
+            --hermes-card-bg: #1e293b;
+        }
+        body.login-page {
+            background-color: var(--hermes-dark) !important;
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .login-box { width: 400px; }
+        .login-logo a {
+            color: var(--hermes-primary) !important;
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 2.5rem;
+        }
+        .card {
+            background-color: var(--hermes-card-bg) !important;
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .login-card-body { color: #f8fafc; padding: 2rem; }
+        .form-control {
+            background-color: var(--hermes-dark) !important;
+            border: 1px solid #334155 !important;
+            color: #ffffff !important;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+        }
+        .btn-primary {
+            background-color: var(--hermes-primary) !important;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .alert { border-radius: 8px; font-size: 0.9rem; }
+    </style>
+</head>
+<body class="login-page" data-bs-theme="dark">
+<div class="login-box">
+    <div class="login-logo text-center mb-4">
+        <a href="/"><b>HERMES</b></a>
+    </div>
+    <div class="card">
+        <div class="card-body login-card-body">
+            <p class="text-center mb-4 opacity-75">Identifique-se para iniciar sua sessão</p>
+
+            <div th:if="${param.error}" class="alert alert-danger text-center py-2 mb-3">
+                <i class="fas fa-exclamation-circle me-2"></i> Usuário ou senha inválidos.
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success text-center py-2 mb-3">
+                <i class="fas fa-check-circle me-2"></i> Você saiu com sucesso.
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Usuário</label>
+                    <input type="text" name="username" class="form-control" placeholder="Seu nome de usuário" required autofocus>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Senha</label>
+                    <input type="password" name="password" class="form-control" placeholder="Sua senha secreta" required>
+                </div>
+                
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Entrar no Sistema</button>
+                </div>
+            </form>
+
+            <div class="text-center mt-4">
+                <a href="#" class="text-decoration-none text-muted small">Esqueci minha senha</a>
+            </div>
+        </div>
+    </div>
+    <div class="text-center mt-4 text-muted small">
+        &copy; 2026 Eurofarma Laboratórios <br>
+        <span class="opacity-50">Hermes EQM v3.0</span>
+    </div>
+</div>
+
+<!-- SCRIPTS -->
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/webjars/admin-lte/4.0.0-beta1/dist/js/adminlte.min.js}"></script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title th:text="${editMode} ? 'Editar Solicitação - ' + ${request?.cmNumber} : 'Nova Solicitação de Mudança'">Solicitação de Mudança</title>
+    <style>
+        .section-title {
+            border-bottom: 2px solid #0056b3;
+            color: #0056b3;
+            font-weight: 600;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            margin-top: 20px;
+        }
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #0056b3 0%, #007bff 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div layout:fragment="page-title">
+    <th:block th:if="${editMode}">Editar Controle de Mudança</th:block>
+    <th:block th:unless="${editMode}">Nova Proposta de Mudança</th:block>
+</div>
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <form id="formCM01" th:object="${request}">
+            <input type="hidden" id="requestId" th:value="*{id}">
+            
+            <div class="row">
+                <div class="col-md-9">
+                    <!-- Card de Identificação -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="card-title mb-0"><i class="fas fa-file-alt me-2"></i>Dados do CM</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="title" class="form-label">Título da Proposta</label>
+                                    <input type="text" class="form-control form-control-lg" id="title" th:value="*{title}" placeholder="Título descritivo da mudança" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Número do CM</label>
+                                    <input type="text" class="form-control" th:value="*{cmNumber ?: 'Gerado ao salvar'}" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="openingDate" class="form-label">Data de abertura</label>
+                                    <input type="date" class="form-control" id="openingDate" th:value="*{openingDate ?: #temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" th:readonly="${editMode}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="unit" class="form-label">Unidade</label>
+                                    <select class="form-select" id="unit" required>
+                                        <option value="" disabled th:selected="*{unit == null}">Selecione...</option>
+                                        <option value="Itapevi" th:selected="*{unit == 'Itapevi'}">Itapevi</option>
+                                        <option value="Momenta" th:selected="*{unit == 'Momenta'}">Momenta</option>
+                                        <option value="Rio de Janeiro" th:selected="*{unit == 'Rio de Janeiro'}">Rio de Janeiro</option>
+                                        <option value="Montes Claros" th:selected="*{unit == 'Montes Claros'}">Montes Claros</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="responsibleName" class="form-label">Responsável (emitente)</label>
+                                    <input type="text" class="form-control" id="responsibleName" th:value="*{responsibleName}" placeholder="Nome ou Matrícula">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="responsibleArea" class="form-label">Área do Emitente</label>
+                                    <input type="text" class="form-control" id="responsibleArea" th:value="*{responsibleArea}" placeholder="Ex: UN08 PRODUÇÃO INDIRETA">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="changeType" class="form-label">Tipo de CM</label>
+                                    <select class="form-control" id="changeType" required>
+                                        <option value="Mudança Geral" th:selected="*{changeType == 'Mudança Geral'}">Mudança Geral</option>
+                                        <option value="Mudança de Emergência" th:selected="*{changeType == 'Mudança de Emergência'}">Mudança de Emergência</option>
+                                        <option value="Projeto" th:selected="*{changeType == 'Projeto'}">Projeto</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="changeSubtype" class="form-label">Tipo de Mudança</label>
+                                    <select class="form-control" id="changeSubtype">
+                                        <option value="Definitivo" th:selected="*{changeSubtype == 'Definitivo'}">Definitivo</option>
+                                        <option value="Temporário" th:selected="*{changeSubtype == 'Temporário'}">Temporário</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="criticality" class="form-label">Criticidade</label>
+                                    <select class="form-control" id="criticality">
+                                        <option value="Baixa" th:selected="*{criticality == 'Baixa'}">Baixa</option>
+                                        <option value="Média" th:selected="*{criticality == 'Média'}">Média</option>
+                                        <option value="Alta" th:selected="*{criticality == 'Alta'}">Alta</option>
+                                        <option value="Crítica" th:selected="*{criticality == 'Crítica'}">Crítica</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="section-title">Situação Atual</div>
+                            <textarea class="form-control mb-3" id="currentSituation" rows="5" th:text="*{currentSituation}" placeholder="Descreva a situação atual..."></textarea>
+                            
+                            <div class="section-title">Situação Proposta</div>
+                            <textarea class="form-control mb-3" id="proposedSituation" rows="5" th:text="*{proposedSituation}" placeholder="Descreva a situação proposta..."></textarea>
+
+                            <div class="section-title">Justificativa da Mudança</div>
+                            <textarea class="form-control mb-3" id="justification" rows="4" th:text="*{justification}" placeholder="Descreva os motivos da mudança..."></textarea>
+
+                            <div class="section-title">Produtos / Códigos Impactados</div>
+                            <textarea class="form-control mb-3" id="affectedProducts" rows="3" th:text="*{affectedProducts}" placeholder="Códigos SAP e descrições dos produtos..."></textarea>
+
+                            <div class="row mt-4">
+                                <div class="col-md-12">
+                                    <div class="form-check form-switch card bg-light p-3 border-0">
+                                        <div class="d-flex align-items-center">
+                                            <input class="form-check-input ms-0 me-3" type="checkbox" role="switch" id="isEmergency" th:checked="*{isEmergency}">
+                                            <div>
+                                                <label class="form-check-label fw-bold" for="isEmergency">Esta mudança é Emergencial?</label>
+                                                <div class="text-muted text-sm">Marque se requer análise imediata fora do fluxo regular.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="emergencySection" class="mt-3" th:style="*{isEmergency} ? 'display:block' : 'display:none'">
+                                <label for="emergencyReason" class="form-label text-danger fw-bold">Motivo de ser emergencial</label>
+                                <textarea class="form-control border-danger" id="emergencyReason" rows="3" th:text="*{emergencyReason}"></textarea>
+                            </div>
+
+                            <div class="mt-4">
+                                <label for="relatedCms" class="form-label">Existem Controles de Mudança já abertos para essa mudança / produto?</label>
+                                <input type="text" class="form-control" id="relatedCms" th:value="*{relatedCms}" placeholder="Informe os números dos CMs separados por vírgula">
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer bg-white d-flex justify-content-between py-3">
+                            <button type="button" id="btnSuggestAI" class="btn btn-outline-primary rounded-pill px-4">
+                                <i class="fas fa-magic me-2"></i> Aperfeiçoar com IA
+                            </button>
+                            <div>
+                                <a th:href="@{/change-control}" class="btn btn-link text-muted me-2">Cancelar</a>
+                                <button th:if="${editMode}" type="submit" class="btn btn-primary rounded-pill px-5 shadow-sm">Salvar Alterações</button>
+                                <button th:unless="${editMode}" type="submit" class="btn btn-primary rounded-pill px-5 shadow-sm">Salvar e Avançar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div id="aiSuggestionPanel" class="card shadow-sm border-0 bg-light mb-4" style="display: none;">
+                        <div class="card-body">
+                            <h6 class="card-title text-primary"><i class="fas fa-brain me-2"></i>Sugestão da IA</h6>
+                            <hr>
+                            <div id="aiContent" class="text-sm"></div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm border-0 border-start border-primary border-4 mb-4">
+                        <div class="card-body">
+                            <h6><i class="fas fa-info-circle me-2 text-primary"></i>Orientações</h6>
+                            <p class="text-muted small mb-0">
+                                Certifique-se de preencher a situação proposta detalhando todas as alterações técnicas pretendidas.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<th:block layout:fragment="extra-scripts">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const editMode = [[${editMode}]];
+        const requestId = [[${request?.id}]];
+        const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+        // Toggle emergencial
+        document.getElementById('isEmergency').addEventListener('change', function() {
+            document.getElementById('emergencySection').style.display = this.checked ? 'block' : 'none';
+        });
+
+        document.getElementById('formCM01').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Garantir que carregou Swal
+            if (typeof Swal === 'undefined') {
+                console.error("Swal missing!");
+                alert("Erro: Biblioteca de Alertas não encontrada. Salvando de forma simplificada...");
+            }
+
+            const payload = {
+                title: document.getElementById('title').value,
+                openingDate: document.getElementById('openingDate').value,
+                unit: document.getElementById('unit').value,
+                responsibleName: document.getElementById('responsibleName').value,
+                responsibleArea: document.getElementById('responsibleArea').value,
+                changeType: document.getElementById('changeType').value,
+                changeSubtype: document.getElementById('changeSubtype').value,
+                criticality: document.getElementById('criticality').value,
+                currentSituation: document.getElementById('currentSituation').value,
+                proposedSituation: document.getElementById('proposedSituation').value,
+                justification: document.getElementById('justification').value,
+                affectedProducts: document.getElementById('affectedProducts').value,
+                emergency: document.getElementById('isEmergency').checked,
+                emergencyReason: document.getElementById('emergencyReason').value,
+                relatedCms: document.getElementById('relatedCms').value
+            };
+
+            const url = editMode ? `/api/change-control/requests/${requestId}` : '/api/change-control/requests';
+            const method = editMode ? 'PUT' : 'POST';
+
+            const headers = { 'Content-Type': 'application/json' };
+            if (csrfHeader && csrfToken) headers[csrfHeader] = csrfToken;
+
+            try {
+                if (typeof Swal !== 'undefined') Swal.showLoading();
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: headers,
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    const saved = await response.json();
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire('Sucesso', 'Solicitação salva com sucesso!', 'success').then(() => {
+                            window.location.href = `/change-control/${saved.id}`;
+                        });
+                    } else {
+                        window.location.href = `/change-control/${saved.id}`;
+                    }
+                } else {
+                    const error = await response.text();
+                    if (typeof Swal !== 'undefined') Swal.fire('Erro', error, 'error');
+                    else alert(error);
+                }
+            } catch (err) {
+                console.error(err);
+                if (typeof Swal !== 'undefined') Swal.fire('Erro', 'Conexão falhou', 'error');
+            }
+        });
+
+        document.getElementById('btnSuggestAI').addEventListener('click', async () => {
+            const desc = document.getElementById('proposedSituation').value;
+            if(!desc) return;
+
+            const aiPanel = document.getElementById('aiSuggestionPanel');
+            const aiContent = document.getElementById('aiContent');
+            aiPanel.style.display = 'block';
+            aiContent.innerHTML = 'Processando...';
+
+            try {
+                const res = await fetch(`/api/change-control/ai-suggest?description=${encodeURIComponent(desc)}`);
+                const data = await res.text();
+                aiContent.innerHTML = data.replace(/\n/g, '<br>');
+            } catch (e) {
+                aiContent.innerHTML = 'Erro na IA.';
+            }
+        });
+        /*]]>*/
+    </script>
+</th:block>
+
+</body>
+</html>
