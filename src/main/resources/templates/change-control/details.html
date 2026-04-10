@@ -139,7 +139,7 @@
                             <div class="step-circle"><i th:class="${request?.status?.ordinal() > 4 ? 'fas fa-check' : 'fas fa-gavel'}"></i></div>
                             <div class="step-label">Comitê</div>
                         </div>
-                        <div class="step" th:classappend="${(request?.status?.ordinal() >= 5 && request?.status?.ordinal() <= 6) ? 'active' : (request?.status?.ordinal() > 6 ? 'completed' : '')}">
+                        <div class="step" th:classappend="${(request?.status?.name() == 'ACTION_PLAN' or request?.status?.name() == 'ACTION_PLAN_APPROVAL') ? 'active' : (request?.status?.ordinal() > 6 ? 'completed' : '')}">
                             <div class="step-circle"><i th:class="${request?.status?.ordinal() > 6 ? 'fas fa-check' : 'fas fa-clipboard-list'}"></i></div>
                             <div class="step-label">Plano</div>
                         </div>
@@ -216,11 +216,12 @@
                         </div>
                     </div>
 
-                    <div th:if="${impactAnalyses != null and request?.status?.ordinal() >= 1}" class="mb-4">
+                    <div th:if="${impactAnalyses != null and !impactAnalyses.isEmpty() and request?.status?.ordinal() >= 1}" class="mb-4">
                         <div class="progress" style="height: 8px; border-radius: 20px; background-color: #f1f5f9;">
                             <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" 
                                  role="progressbar" 
-                                 th:style="'width: ' + ((enabledCount != null and enabledCount > 0) ? (completedCount * 100.0 / enabledCount) : 0) + '%'"></div>
+                                 th:with="percent=${(enabledCount != null and enabledCount > 0) ? (completedCount * 100.0 / enabledCount) : 0}"
+                                 th:style="'width: ' + ${percent} + '%'"></div>
                         </div>
                     </div>
 
