@@ -1,0 +1,96 @@
+<div class="dashboard-container px-0">
+  <div class="row g-4 mb-4">
+    <!-- Total Changes Widget (Berry Style) -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="berry-card p-4 d-flex align-items-start position-relative overflow-hidden h-100">
+        <div class="flex-grow-1">
+          <h6 class="text-muted fw-500 mb-1">Total de CMs</h6>
+          <h2 class="mb-0 fw-700">{{ analyticsData?.totalChanges || 0 }}</h2>
+          <div class="mt-2 small text-success">
+            <i class="pi pi-arrow-up"></i> 12% desde ontem
+          </div>
+        </div>
+        <div class="berry-icon-box bg-primary-light text-primary rounded-3 p-3 ms-2">
+          <i class="pi pi-list" style="font-size: 24px;"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Changes Widget -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="berry-card p-4 d-flex align-items-start position-relative overflow-hidden h-100">
+        <div class="flex-grow-1">
+          <h6 class="text-muted fw-500 mb-1">Pendentes</h6>
+          <h2 class="mb-0 fw-700 text-warning">{{ analyticsData?.pendingChanges || 0 }}</h2>
+          <div class="mt-2 small text-muted">Aguardando aprovação</div>
+        </div>
+        <div class="berry-icon-box" style="background: #fff8e1; color: #ffa000; padding: 16px; border-radius: 12px;">
+          <i class="pi pi-clock" style="font-size: 24px;"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Approved Changes Widget -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="berry-card p-4 d-flex align-items-start position-relative overflow-hidden h-100">
+        <div class="flex-grow-1">
+          <h6 class="text-muted fw-500 mb-1">Aprovadas</h6>
+          <h2 class="mb-0 fw-700 text-success">{{ analyticsData?.approvedChanges || 0 }}</h2>
+          <div class="mt-2 small text-success">Certificadas GxP</div>
+        </div>
+        <div class="berry-icon-box" style="background: #e8f5e9; color: #2e7d32; padding: 16px; border-radius: 12px;">
+          <i class="pi pi-check-circle" style="font-size: 24px;"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Areas Widget -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="berry-card p-4 d-flex align-items-start position-relative overflow-hidden h-100">
+        <div class="flex-grow-1">
+          <h6 class="text-muted fw-500 mb-1">Áreas Ativas</h6>
+          <h2 class="mb-0 fw-700 text-primary">12</h2>
+          <div class="mt-2 small text-muted">Monitoramento Global</div>
+        </div>
+        <div class="berry-icon-box" style="background: var(--secondary-light); color: var(--secondary); padding: 16px; border-radius: 12px;">
+          <i class="pi pi-shield" style="font-size: 24px;"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="row g-4">
+    <div class="col-12 col-lg-8">
+      <div class="berry-card p-0 overflow-hidden">
+        <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Tendência Mensal de Mudanças</h5>
+          <button class="btn btn-light btn-sm">Ver Detalhes</button>
+        </div>
+        <div class="p-4">
+          <p-chart type="line" [data]="trendChartData" [options]="chartOptions" height="350px"></p-chart>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="berry-card p-0 overflow-hidden">
+        <div class="p-4 border-bottom">
+          <h5 class="mb-0">Distribuição por Categoria</h5>
+        </div>
+        <div class="p-4 d-flex justify-content-center">
+          <p-chart type="doughnut" [data]="typeChartData" [options]="chartOptions" height="300px" width="100%"></p-chart>
+        </div>
+        <div class="p-4 bg-light border-top">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="small text-muted">Processo</span>
+            <span class="small fw-bold">45%</span>
+          </div>
+          <div class="progress" style="height: 6px;">
+            <div class="progress-bar bg-primary" style="width: 45%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

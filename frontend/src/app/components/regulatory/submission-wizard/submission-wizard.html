@@ -1,0 +1,181 @@
+<div class="submission-wizard-view p-6 max-w-5xl mx-auto">
+    <!-- Header Section -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-navy tracking-tight">Nova Submissão Regulatória</h1>
+        <p class="text-secondary mt-1">Siga os passos para preparar o dossiê e vincular as mudanças correspondentes.</p>
+    </div>
+
+    <!-- Wizard Card -->
+    <div class="berry-card shadow-lg border-0 rounded-2xl overflow-hidden bg-white">
+        <p-stepper [linear]="true" styleClass="berry-modern-stepper">
+            <p-step-list class="bg-gray-50/50 p-4 border-b border-gray-100">
+                <p-step [value]="1" class="font-bold">1. Estratégia</p-step>
+                <p-step [value]="2" class="font-bold">2. Vincular Mudanças</p-step>
+                <p-step [value]="3" class="font-bold">3. Finalizar</p-step>
+            </p-step-list>
+
+            <p-step-panels class="p-8">
+                <!-- Passo 1: Informações Básicas -->
+                <p-step-panel [value]="1">
+                    <ng-template #content let-nextCallback="nextCallback">
+                        <div class="flex flex-col gap-6">
+                            <div class="gxp-info-box-berry flex items-center p-4 bg-teal-50 border-l-4 border-teal-500 rounded-r-lg" *ngIf="submission.type">
+                                <i class="pi pi-shield text-teal-600 text-2xl mr-4"></i>
+                                <div>
+                                    <span class="font-bold text-teal-900 block">Conformidade GxP Ativa</span>
+                                    <span class="text-sm text-teal-700">{{ getGxpImpactMessage() }}</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="field flex flex-col gap-2">
+                                    <label class="text-sm font-bold text-gray-700 uppercase tracking-wider">Título da Submissão</label>
+                                    <input pInputText [(ngModel)]="submission.title" 
+                                           class="w-full berry-input" 
+                                           placeholder="Ex: Renovação de Registro - Produto X" />
+                                </div>
+                                <div class="field flex flex-col gap-2">
+                                    <label class="text-sm font-bold text-gray-700 uppercase tracking-wider">Mercado / País</label>
+                                    <p-dropdown [options]="markets" [(ngModel)]="submission.market" 
+                                               styleClass="w-full berry-dropdown" 
+                                               placeholder="Selecione o Mercado"></p-dropdown>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="field flex flex-col gap-2">
+                                    <label class="text-sm font-bold text-gray-700 uppercase tracking-wider">Autoridade Sanitária</label>
+                                    <input pInputText [(ngModel)]="submission.authority" 
+                                           class="w-full berry-input" 
+                                           placeholder="Ex: Anvisa, FDA, EMA" />
+                                </div>
+                                <div class="field flex flex-col gap-2">
+                                    <label class="text-sm font-bold text-gray-700 uppercase tracking-wider">Tipo de Submissão</label>
+                                    <p-dropdown [options]="types" [(ngModel)]="submission.type" 
+                                               styleClass="w-full berry-dropdown" 
+                                               placeholder="Selecione o Tipo"></p-dropdown>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end mt-10 pt-6 border-t border-gray-100">
+                                <button pButton label="Próximo Passo" icon="pi pi-arrow-right" iconPos="right" 
+                                        (onClick)="nextCallback.emit()" 
+                                        [disabled]="!submission.title || !submission.market"
+                                        class="p-button-primary berry-button h-12 px-8 bg-teal-600 border-teal-600"></button>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+
+                <!-- Passo 2: Vincular mudanças (CMs) -->
+                <p-step-panel [value]="2">
+                    <ng-template #content let-prevCallback="prevCallback" let-nextCallback="nextCallback">
+                         <div class="flex flex-col gap-6">
+                            <div class="mb-2">
+                                <h3 class="text-xl font-bold text-navy">Vincular Controles de Mudança (CMs)</h3>
+                                <p class="text-secondary">Selecione os processos aprovados que compõem esta submissão.</p>
+                            </div>
+                            
+                            <div class="border border-gray-100 rounded-xl overflow-hidden shadow-sm">
+                                <p-table [value]="availableChanges" [(selection)]="selectedChanges" [rows]="5" [paginator]="true" styleClass="p-datatable-sm">
+                                    <ng-template pTemplate="header">
+                                        <tr class="bg-gray-50">
+                                            <th style="width: 4rem" class="p-4"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+                                            <th class="p-4 text-xs font-bold text-gray-500 uppercase">Número</th>
+                                            <th class="p-4 text-xs font-bold text-gray-500 uppercase">Título</th>
+                                            <th class="p-4 text-xs font-bold text-gray-500 uppercase text-center">Data</th>
+                                            <th class="p-4 text-xs font-bold text-gray-500 uppercase text-center">Status</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-cr>
+                                        <tr class="hover:bg-gray-50 transition-colors">
+                                            <td class="p-4"><p-tableCheckbox [value]="cr"></p-tableCheckbox></td>
+                                            <td class="p-4 font-bold text-primary-700">{{ cr.cmNumber }}</td>
+                                            <td class="p-4 text-sm text-gray-700">{{ cr.title }}</td>
+                                            <td class="p-4 text-sm text-center text-gray-500">{{ cr.createdAt | date:'dd/MM/yyyy' }}</td>
+                                            <td class="p-4 text-center">
+                                                <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold">
+                                                    {{ cr.status }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+
+                            <div class="flex justify-between mt-10 pt-6 border-t border-gray-100">
+                                <button pButton label="Voltar" icon="pi pi-arrow-left" 
+                                        (onClick)="prevCallback.emit()" 
+                                        class="p-button-outlined p-button-secondary berry-button h-12 px-8"></button>
+                                <button pButton label="Próximo Passo" icon="pi pi-arrow-right" iconPos="right" 
+                                        (onClick)="nextCallback.emit()"
+                                        class="p-button-primary berry-button h-12 px-8 bg-teal-600 border-teal-600"></button>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+
+                <!-- Passo 3: Revisão e Envio -->
+                <p-step-panel [value]="3">
+                    <ng-template #content let-prevCallback="prevCallback">
+                        <div class="flex flex-col gap-8">
+                            <div class="summary-card-berry p-6 bg-gray-50 rounded-xl border border-gray-200">
+                                <h3 class="text-lg font-bold text-navy mb-6 flex items-center">
+                                    <i class="pi pi-file-check mr-3 text-teal-600"></i>
+                                    Resumo da Estratégia
+                                </h3>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                    <div class="flex flex-col">
+                                        <span class="text-xs font-bold text-gray-400 uppercase">Mercado</span>
+                                        <span class="font-semibold text-gray-800">{{ submission.market }}</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-xs font-bold text-gray-400 uppercase">Autoridade</span>
+                                        <span class="font-semibold text-gray-800">{{ submission.authority }}</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-xs font-bold text-gray-400 uppercase">Itens Vinculados</span>
+                                        <span class="font-semibold text-teal-600">{{ selectedChanges.length }} Mudanças</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-xs font-bold text-gray-400 uppercase">Previsão</span>
+                                        <span class="font-semibold text-gray-800">{{ submission.submissionDate | date:'dd/MM/yyyy' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-8">
+                                <div class="field flex flex-col gap-2">
+                                    <label class="text-sm font-bold text-gray-700 uppercase tracking-wider">Link do Dossiê Cloud (SharePoint/DMS)</label>
+                                    <div class="p-inputgroup">
+                                        <span class="p-inputgroup-addon bg-gray-50 border-gray-200"><i class="pi pi-link"></i></span>
+                                        <input pInputText [(ngModel)]="submission.dossierLink" 
+                                               class="w-full berry-input border-cyan-200" 
+                                               placeholder="https://eurofarma.sharepoint.com/..." />
+                                    </div>
+                                </div>
+
+                                <div class="field flex flex-col gap-2">
+                                    <label class="text-sm font-bold text-gray-700 uppercase tracking-wider">Notas Técnicas Adicionais</label>
+                                    <textarea pTextarea [(ngModel)]="submission.notes" rows="4" 
+                                              class="w-full berry-input" 
+                                              placeholder="Descreva detalhes específicos da submissão..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between mt-6 pt-6 border-t border-gray-100">
+                                <button pButton label="Voltar" icon="pi pi-arrow-left" 
+                                        (onClick)="prevCallback.emit()" 
+                                        class="p-button-outlined p-button-secondary berry-button h-12 px-8"></button>
+                                <button pButton label="Finalizar e Submeter" icon="pi pi-send" 
+                                        (onClick)="saveSubmission()" 
+                                        [loading]="saving"
+                                        class="p-button-success berry-button h-12 px-10 bg-teal-600 border-teal-600 hover:bg-teal-700 shadow-teal"></button>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+            </p-step-panels>
+        </p-stepper>
+    </div>
+</div>

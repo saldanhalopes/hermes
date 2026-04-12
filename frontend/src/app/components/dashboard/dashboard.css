@@ -1,0 +1,46 @@
+.dashboard-container {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+:host ::ng-deep .p-chart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.berry-icon-box {
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.berry-card:hover .berry-icon-box {
+  transform: scale(1.1);
+}
+
+.text-teal {
+  color: var(--primary) !important;
+}
+
+.bg-primary-light {
+  background-color: var(--primary-light) !important;
+}
+
+.progress {
+  background-color: var(--grey-200);
+  border-radius: 4px;
+}
+
+.progress-bar {
+  border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  .berry-header {
+    padding: 0 16px;
+  }
+}

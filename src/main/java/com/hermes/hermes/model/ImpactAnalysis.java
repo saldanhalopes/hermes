@@ -1,5 +1,6 @@
 package com.hermes.hermes.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +32,7 @@ public class ImpactAnalysis {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "change_request_id", nullable = false)
+    @JsonIgnore
     private ChangeRequest changeRequest;
 
     // --- Identificação da Área ---

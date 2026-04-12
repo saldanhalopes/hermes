@@ -1,0 +1,77 @@
+<div class="page-view-list px-0">
+  <div class="row align-items-center mb-4">
+    <div class="col">
+      <h3 class="mb-1 fw-700">Controle de Mudanças</h3>
+      <p class="text-muted small mb-0">Gerencie o ciclo de vida das solicitações de mudança GxP.</p>
+    </div>
+    <div class="col-auto">
+      <div class="d-flex gap-3 align-items-center">
+        <div class="berry-search bg-white border rounded-pill px-3 py-1 d-flex align-items-center shadow-sm" style="width: 280px;">
+          <i class="pi pi-search text-muted me-2"></i>
+          <input type="text" pInputText placeholder="Pesquisar CM..." 
+                 class="border-0 bg-transparent p-0 w-100 small" 
+                 (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
+        </div>
+        <button class="btn btn-primary d-flex align-items-center gap-2 px-3 py-2 fw-600 rounded-3 shadow-sm" 
+           [routerLink]="['/change-control/new']">
+          <i class="pi pi-plus"></i>
+          <span>Nova Mudança</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table Section -->
+  <div class="berry-card p-0 overflow-hidden shadow-sm">
+        <p-table #dt 
+                 [value]="changes" 
+                 [loading]="loading" 
+                 [paginator]="true" 
+                 [rows]="10" 
+                 [globalFilterFields]="['cmNumber', 'title', 'responsibleArea', 'status']"
+                 styleClass="p-datatable-modern" 
+                 responsiveLayout="scroll">
+            
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="cmNumber" style="width: 120px">Número <p-sortIcon field="cmNumber"></p-sortIcon></th>
+                    <th pSortableColumn="title">Título <p-sortIcon field="title"></p-sortIcon></th>
+                    <th>Área</th>
+                    <th style="width: 150px">Status</th>
+                    <th style="width: 140px">Data</th>
+                    <th style="width: 100px"></th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-change>
+                <tr class="modern-row">
+                    <td class="cm-number-cell">{{ change.cmNumber }}</td>
+                    <td class="title-cell">
+                        <span class="font-weight-bold d-block">{{ change.title }}</span>
+                        <small class="text-muted d-block">{{ change.responsibleName }}</small>
+                    </td>
+                    <td>{{ change.responsibleArea }}</td>
+                    <td>
+                        <p-badge [value]="change.status" [severity]="getSeverity(change.status)"></p-badge>
+                    </td>
+                    <td>{{ change.openingDate | date:'dd/MM/yyyy' }}</td>
+                    <td class="actions-cell">
+                        <div class="row-hover-actions">
+                            <p-button icon="pi pi-search" [rounded]="true" [text]="true" [routerLink]="['/change-control', change.id]" pTooltip="Ver Detalhes" tooltipPosition="top"></p-button>
+                            <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="secondary" [routerLink]="['/change-control/edit', change.id]" pTooltip="Editar" tooltipPosition="top"></p-button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="6" class="text-center py-5">
+                        <i class="pi pi-folder-open text-muted mb-3" style="font-size: 3rem"></i>
+                        <p class="text-muted">Nenhuma solicitação de mudança encontrada para os filtros aplicados.</p>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>

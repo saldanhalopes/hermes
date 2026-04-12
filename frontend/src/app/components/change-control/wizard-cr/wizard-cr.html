@@ -1,0 +1,171 @@
+<div class="premium-wizard-container">
+    <div class="wizard-header mb-5">
+        <h1 class="page-title">Novo Controle de Mudança</h1>
+        <p class="text-muted">Documentação técnica seguindo diretrizes de integridade de dados GxP.</p>
+    </div>
+
+    <p-card styleClass="berry-card p-0 overflow-hidden">
+        <form [formGroup]="wizardForm">
+            <p-stepper [value]="1" class="berry-stepper">
+                <p-step-list class="bg-light border-bottom p-3">
+                    <p-step [value]="1">Identificação</p-step>
+                    <p-step [value]="2">Contexto</p-step>
+                    <p-step [value]="3">Impacto</p-step>
+                    <p-step [value]="4">Justificativa</p-step>
+                    <p-step [value]="5">Revisão</p-step>
+                </p-step-list>
+
+                <p-step-panels>
+                    <!-- Step 1: Identification -->
+                    <p-step-panel [value]="1">
+                        <ng-template #content let-activateCallback="activateCallback">
+                            <div class="step-pane p-4">
+                                <div class="field mb-5">
+                                    <p-floatLabel>
+                                        <input id="title" type="text" pInputText formControlName="title" class="w-100" />
+                                        <label for="title">Título da Mudança</label>
+                                    </p-floatLabel>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-4 mb-4">
+                                        <p-floatLabel>
+                                            <p-dropdown [options]="changeTypes" formControlName="changeType" styleClass="w-100" inputId="ctype" appendTo="body"></p-dropdown>
+                                            <label for="ctype">Tipo de Mudança</label>
+                                        </p-floatLabel>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <p-floatLabel>
+                                            <input id="resp" type="text" pInputText formControlName="responsibleName" class="w-100" />
+                                            <label for="resp">Responsável Técnico</label>
+                                        </p-floatLabel>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <p-floatLabel>
+                                            <input id="area" type="text" pInputText formControlName="responsibleArea" class="w-100" />
+                                            <label for="area">Área Solicitante</label>
+                                        </p-floatLabel>
+                                    </div>
+                                </div>
+
+                                <div class="wizard-footer-actions">
+                                    <p-button label="Próximo Passo" icon="pi pi-chevron-right" iconPos="right" (onClick)="activateCallback(2)" [disabled]="!wizardForm.get('title')?.valid"></p-button>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-step-panel>
+
+                    <!-- Step 2: Contexto Técnico -->
+                    <p-step-panel [value]="2">
+                        <ng-template #content let-activateCallback="activateCallback">
+                            <div class="step-pane p-4">
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <p-floatLabel>
+                                            <textarea pInputTextarea formControlName="currentSituation" rows="10" class="w-100"></textarea>
+                                            <label>Situação Atual (Referência)</label>
+                                        </p-floatLabel>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <p-floatLabel>
+                                            <textarea pInputTextarea formControlName="proposedSituation" rows="10" class="w-100"></textarea>
+                                            <label>Situação Proposta (Alteração)</label>
+                                        </p-floatLabel>
+                                    </div>
+                                </div>
+                                <div class="wizard-footer-actions">
+                                    <p-button label="Voltar" severity="secondary" [text]="true" (onClick)="activateCallback(1)"></p-button>
+                                    <p-button label="Próximo Passo" icon="pi pi-chevron-right" iconPos="right" (onClick)="activateCallback(3)"></p-button>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-step-panel>
+
+                    <!-- Step 3: Impacto -->
+                    <p-step-panel [value]="3">
+                        <ng-template #content let-activateCallback="activateCallback">
+                            <div class="step-pane p-4">
+                                <div class="field mb-5">
+                                    <p-floatLabel>
+                                        <input type="text" pInputText formControlName="affectedProducts" class="w-100" />
+                                        <label>Produtos ou Sistemas Afetados</label>
+                                    </p-floatLabel>
+                                </div>
+                                <div class="field-checkbox mb-4 p-3 bg-light rounded border border-secondary border-opacity-10">
+                                    <p-checkbox formControlName="emergency" [binary]="true" inputId="em-check"></p-checkbox>
+                                    <label for="em-check" class="ml-2 font-weight-bold">Esta é uma mudança emergencial?</label>
+                                </div>
+                                <div class="field mb-4" *ngIf="wizardForm.get('emergency')?.value">
+                                    <p-floatLabel>
+                                        <textarea pInputTextarea formControlName="emergencyReason" rows="3" class="w-100"></textarea>
+                                        <label>Motivo da Emergência</label>
+                                    </p-floatLabel>
+                                </div>
+                                <div class="wizard-footer-actions">
+                                    <p-button label="Voltar" severity="secondary" [text]="true" (onClick)="activateCallback(2)"></p-button>
+                                    <p-button label="Próximo Passo" icon="pi pi-chevron-right" iconPos="right" (onClick)="activateCallback(4)"></p-button>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-step-panel>
+
+                    <!-- Step 4: Justificação -->
+                    <p-step-panel [value]="4">
+                        <ng-template #content let-activateCallback="activateCallback">
+                            <div class="step-pane p-4">
+                                <div class="field mb-5">
+                                    <p-floatLabel>
+                                        <textarea pInputTextarea formControlName="justification" rows="6" class="w-100"></textarea>
+                                        <label>Justificativa Técnica</label>
+                                    </p-floatLabel>
+                                </div>
+                                <div class="col-md-4 mb-4 p-0">
+                                    <p-floatLabel>
+                                        <p-dropdown [options]="criticalityLevels" formControlName="criticality" styleClass="w-100" inputId="crit" appendTo="body"></p-dropdown>
+                                        <label for="crit">Criticidade Sugerida</label>
+                                    </p-floatLabel>
+                                </div>
+                                <div class="wizard-footer-actions">
+                                    <p-button label="Voltar" severity="secondary" [text]="true" (onClick)="activateCallback(3)"></p-button>
+                                    <p-button label="Revisar Solicitação" icon="pi pi-eye" iconPos="right" (onClick)="activateCallback(5)" [disabled]="!wizardForm.valid"></p-button>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-step-panel>
+
+                    <!-- Step 5: Review -->
+                    <p-step-panel [value]="5">
+                        <ng-template #content let-activateCallback="activateCallback">
+                            <div class="step-pane p-4">
+                                <div class="summary-box p-4 bg-teal-soft rounded-4 mb-4">
+                                    <h3 class="h5 mb-4 d-flex align-items-center"><i class="pi pi-info-circle mr-2 text-teal"></i> Revisão de Integridade</h3>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="text-muted d-block small">Título</label>
+                                            <strong>{{ wizardForm.value.title }}</strong>
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label class="text-muted d-block small">Tipo</label>
+                                            <strong>{{ wizardForm.value.changeType }}</strong>
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label class="text-muted d-block small">Criticidade</label>
+                                            <strong>{{ wizardForm.value.criticality }}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <p class="text-center text-muted small px-5">Ao clicar em confirmar, você declara que as informações acima são verídicas e condizem com a realidade operacional da planta.</p>
+
+                                <div class="wizard-footer-actions mt-5">
+                                    <p-button label="Voltar" severity="secondary" [text]="true" (onClick)="activateCallback(4)"></p-button>
+                                    <p-button label="Confirmar e Gerar CM" icon="pi pi-check-circle" severity="success" (onClick)="saveCR()"></p-button>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-step-panel>
+                </p-step-panels>
+            </p-stepper>
+        </form>
+    </p-card>
+</div>

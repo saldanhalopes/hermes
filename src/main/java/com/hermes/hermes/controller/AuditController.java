@@ -2,22 +2,28 @@ package com.hermes.hermes.controller;
 
 import com.hermes.hermes.service.AuditService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@RequestMapping("/admin/audit")
+@RestController
+@RequestMapping("/api/audit")
 @RequiredArgsConstructor
+@Tag(name = "Auditoria", description = "Logs de auditoria e acessos")
 public class AuditController {
 
     private final AuditService auditService;
 
     @GetMapping
-    public String viewAuditLogs(Model model) {
-        model.addAttribute("auditLogs", auditService.getRecentChanges(100));
-        model.addAttribute("accessLogs", auditService.getRecentAccessLogs());
-        return "admin/audit";
+    @Operation(summary = "Listar logs de auditoria", description = "Retorna logs de mudanças recentes e acessos")
+    public java.util.Map<String, Object> viewAuditLogs() {
+        return java.util.Map.of(
+            "auditLogs", auditService.getRecentChanges(100),
+            "accessLogs", auditService.getRecentAccessLogs()
+        );
     }
 }
+
+

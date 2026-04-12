@@ -1,0 +1,120 @@
+.premium-wizard-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.berry-stepper :host ::ng-deep .p-stepper {
+    background: transparent !important;
+}
+
+.berry-stepper :host ::ng-deep .p-stepper-header {
+    background: #ffffff !important;
+    border-bottom: 1px solid var(--grey-100);
+    padding: 1.5rem 1rem !important;
+}
+
+.berry-stepper :host ::ng-deep .p-stepper-title {
+    font-weight: 700 !important;
+    color: var(--grey-700) !important;
+}
+
+.berry-stepper :host ::ng-deep .p-stepper-number {
+    background: var(--grey-50) !important;
+    color: var(--grey-700) !important;
+    border-radius: 8px !important;
+    font-weight: 800 !important;
+}
+
+.berry-stepper :host ::ng-deep .p-step-active .p-stepper-number {
+    background: var(--primary) !important;
+    color: #fff !important;
+}
+
+.berry-stepper :host ::ng-deep .p-step-active .p-stepper-title {
+    color: #000000 !important;
+}
+
+/* Form Styles */
+.step-pane {
+    animation: slideUp 0.4s cubic-bezier(0, 0, 0.2, 1);
+    background: #ffffff;
+}
+
+/* Float Label Definitive Fix */
+:host ::ng-deep p-floatlabel {
+    display: block;
+    position: relative;
+    margin-top: 1.5rem; /* Give space for the label to float up */
+}
+
+:host ::ng-deep p-floatlabel label {
+    left: 1rem !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    transition: all 0.2s ease !important;
+    pointer-events: none;
+    color: var(--grey-500) !important;
+    z-index: 10;
+}
+
+:host ::ng-deep p-floatlabel:has(:focus) label,
+:host ::ng-deep p-floatlabel:has(.p-filled) label,
+:host ::ng-deep p-floatlabel:has(.p-inputwrapper-focus) label,
+:host ::ng-deep p-floatlabel:has(.p-inputwrapper-filled) label {
+    top: 0 !important;
+    transform: translateY(-50%) scale(0.85) !important;
+    font-size: 0.75rem !important;
+    font-weight: 800 !important;
+    color: var(--primary) !important;
+    background: white !important;
+    padding: 0 5px !important;
+}
+
+:host ::ng-deep p-floatlabel .p-inputtext, 
+:host ::ng-deep p-floatlabel .p-inputtextarea,
+:host ::ng-deep p-floatlabel .p-dropdown,
+:host ::ng-deep p-floatlabel .p-select {
+    border-radius: 12px !important;
+    padding: 1rem !important; /* Slightly more vertical padding to center text when label isn't floating */
+    background: #ffffff !important;
+    border: 1px solid var(--grey-200) !important;
+    color: #000000 !important;
+    width: 100%;
+}
+
+:host ::ng-deep .p-inputtext:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px var(--primary-light) !important;
+    color: #000000 !important;
+}
+
+.wizard-footer-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    border-top: 1px solid var(--grey-100);
+    padding-top: 2rem;
+    margin-top: 2rem;
+}
+
+/* Summary Box */
+.bg-teal-soft {
+    background: var(--primary-light);
+    border: 1px dashed var(--primary);
+    border-radius: 12px;
+}
+
+.border-teal {
+    border-color: var(--primary) !important;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .row > div {
+        margin-bottom: 1.5rem;
+    }
+}

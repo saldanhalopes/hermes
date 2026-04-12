@@ -1,0 +1,93 @@
+<div class="berry-layout">
+  <!-- Berry Sidebar -->
+  <aside class="berry-sidebar" [class.collapsed]="isCollapsed">
+    <div class="d-flex align-items-center mb-4 px-2">
+      <div class="logo-circle bg-primary text-white d-flex align-items-center justify-content-center" 
+           style="width: 40px; height: 40px; border-radius: 12px; font-weight: 800; font-size: 20px;">
+        H
+      </div>
+      <span class="ms-3 fw-bold" style="font-size: 18px; color: var(--grey-900);" *ngIf="!isCollapsed">HERMES EQM</span>
+    </div>
+
+    <div class="nav-section-title" *ngIf="!isCollapsed">Main Menu</div>
+    <nav class="berry-nav">
+      <a routerLink="/dashboard" routerLinkActive="active" class="berry-nav-item" 
+         pTooltip="Dashboard" [tooltipDisabled]="!isCollapsed" tooltipPosition="right">
+        <i class="pi pi-dashboard"></i>
+        <span *ngIf="!isCollapsed">Dashboard</span>
+      </a>
+
+      <div class="nav-section-title" *ngIf="!isCollapsed">Compliance</div>
+      <a routerLink="/change-control" routerLinkActive="active" class="berry-nav-item"
+         pTooltip="Controle de Mudanças" [tooltipDisabled]="!isCollapsed" tooltipPosition="right">
+        <i class="pi pi-sync"></i>
+        <span *ngIf="!isCollapsed">Controle de Mudanças</span>
+      </a>
+
+      <a routerLink="/capa" routerLinkActive="active" class="berry-nav-item"
+         pTooltip="CAPA Radar" [tooltipDisabled]="!isCollapsed" tooltipPosition="right">
+        <i class="pi pi-shield"></i>
+        <span *ngIf="!isCollapsed">CAPA Radar</span>
+      </a>
+
+      <a routerLink="/regulatory" routerLinkActive="active" class="berry-nav-item"
+         pTooltip="Assuntos Regulatórios" [tooltipDisabled]="!isCollapsed" tooltipPosition="right">
+        <i class="pi pi-globe"></i>
+        <span *ngIf="!isCollapsed">A. Regulatórios</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer mt-auto" *ngIf="!isCollapsed">
+      <div class="berry-card p-3 bg-light border-0" style="background: var(--primary-light) !important;">
+        <div class="d-flex align-items-center">
+          <div class="status-indicator bg-success" style="width: 8px; height: 8px; border-radius: 50%;"></div>
+          <span class="ms-2 small fw-600 text-teal">GXP AUDIT SECURE</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Berry Main Area -->
+  <main class="berry-main" [class.expanded]="isCollapsed">
+    <!-- Berry Top Header -->
+    <header class="berry-header">
+      <div class="header-left d-flex align-items-center">
+        <button class="btn btn-light rounded-3 p-2 d-flex align-items-center justify-content-center" 
+                (click)="toggleSidebar()" style="width: 42px; height: 42px; background: var(--primary-light); color: var(--primary); border: none;">
+          <i class="pi" [class.pi-menu]="!isCollapsed" [class.pi-arrow-right]="isCollapsed"></i>
+        </button>
+        <h4 class="ms-3 mb-0">{{ title }}</h4>
+      </div>
+
+      <div class="header-right d-flex align-items-center gap-3">
+        <!-- Search placeholder -->
+        <div class="d-none d-md-flex berry-search bg-white border rounded-pill px-3 py-2 align-items-center" style="width: 250px;">
+          <i class="pi pi-search text-muted me-2"></i>
+          <span class="text-muted small">Pesquisar...</span>
+        </div>
+
+        <button class="btn btn-light rounded-pill p-2 position-relative" style="background: var(--secondary-light); color: var(--secondary); border: none; width: 42px; height: 42px;">
+          <i class="pi pi-bell"></i>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 10px;">
+            3
+          </span>
+        </button>
+
+        <div class="user-profile ms-2 berry-card p-2 border-0 d-flex align-items-center gap-2" style="background: var(--primary-light);">
+          <p-avatar label="AP" styleClass="user-avatar" shape="circle" size="normal" 
+                    [style]="{'background-color': 'var(--primary)', 'color': '#ffffff'}"></p-avatar>
+          <div class="user-meta d-none d-lg-block me-2">
+            <div class="fw-bold small text-teal">Dr. Arthur Pendragon</div>
+            <div class="text-muted" style="font-size: 11px;">Admin</div>
+          </div>
+          <i class="pi pi-cog text-teal"></i>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Container -->
+    <div class="berry-content">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

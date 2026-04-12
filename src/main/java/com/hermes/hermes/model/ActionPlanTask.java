@@ -1,5 +1,6 @@
 package com.hermes.hermes.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,7 @@ public class ActionPlanTask {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "change_request_id")
+    @JsonIgnore
     private ChangeRequest changeRequest;
 
     /**

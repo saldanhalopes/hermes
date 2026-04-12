@@ -1,0 +1,85 @@
+/* CAPA Detail Berry Style */
+.page-view-detail {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fw-700 { font-weight: 700; }
+.fw-600 { font-weight: 600; }
+.fw-500 { font-weight: 500; }
+.extra-small { font-size: 0.75rem; }
+
+/* RCA Steps */
+.why-number {
+  min-width: 30px;
+  font-size: 1.1rem;
+}
+
+/* Teal Soft Background */
+.bg-teal-soft {
+  background-color: var(--teal-50);
+  border: 1px dashed var(--teal-200);
+}
+
+.text-teal {
+  color: var(--teal-600);
+}
+
+/* Status Pills */
+.status-pill {
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-pill.success { background: var(--teal-100); color: var(--teal-700); border: 1px solid var(--teal-200); }
+.status-pill.warning { background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; }
+
+/* GxP Badge */
+.gxp-badge {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--primary-50);
+    color: var(--primary-700);
+    border: 1px solid var(--primary-100);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* Timeline Customization */
+::ng-deep .customized-timeline .p-timeline-event-content {
+  padding: 0 1rem !important;
+}
+
+.timeline-marker {
+  display: flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.timeline-content {
+  border-left: 2px solid var(--grey-100);
+  padding-left: 1.5rem;
+  margin-left: -12px;
+}
+
+/* Table Overrides */
+::ng-deep .p-datatable-modern .p-datatable-thead > tr > th {
+  background: var(--grey-50) !important;
+  color: var(--grey-700) !important;
+  font-size: 0.75rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 1rem !important;
+}

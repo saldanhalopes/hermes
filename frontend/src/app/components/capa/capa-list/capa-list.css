@@ -1,0 +1,38 @@
+/* CAPA List Berry Style */
+.page-view-list {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Force White Table */
+:host ::ng-deep .p-datatable-modern .p-datatable-thead > tr > th,
+:host ::ng-deep .p-datatable-modern .p-datatable-tbody > tr,
+:host ::ng-deep .p-datatable-modern .p-paginator,
+:host ::ng-deep .p-datatable-modern .p-datatable-header,
+:host ::ng-deep .p-datatable-modern .p-datatable-footer {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+:host ::ng-deep .p-datatable-modern .p-datatable-thead > tr > th {
+    background: var(--grey-50) !important;
+}
+
+.empty-state {
+    padding: 3rem 1rem;
+    text-align: center;
+    background: #ffffff;
+}
+
+.empty-state i {
+    color: var(--grey-300) !important;
+}
+
+.empty-state p {
+    color: #000000 !important;
+    font-weight: 500;
+}

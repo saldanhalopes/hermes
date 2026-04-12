@@ -7,7 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class HermesApplication {
 
 	public static void main(String[] args) {
+		System.out.println("HERMES EQM: Starting Backend in OMEGA DIAGNOSTIC MODE...");
 		SpringApplication.run(HermesApplication.class, args);
 	}
+
 
 }

@@ -1,0 +1,158 @@
+<div class="capa-wizard-view px-0">
+  <!-- Header Section -->
+  <div class="row align-items-center mb-4">
+    <div class="col">
+      <h3 class="mb-0 fw-700 text-teal">Abertura de CAPA</h3>
+      <p class="text-muted small mb-0">Investigação de causa raiz e plano de ação preventiva/corretiva.</p>
+    </div>
+    <div class="col-auto">
+      <button class="btn btn-light fw-600 px-3 rounded-3 shadow-sm" [routerLink]="['/capa']">
+        <i class="pi pi-times me-2"></i>Cancelar
+      </button>
+    </div>
+  </div>
+
+  <div class="berry-card shadow-sm border-0 overflow-hidden">
+    <form [formGroup]="capaForm">
+      <p-stepper [value]="1" styleClass="berry-modern-stepper">
+        <p-step-list class="bg-light border-bottom p-3">
+          <p-step [value]="1" class="fw-600">1. Origem</p-step>
+          <p-step [value]="2" class="fw-600">2. Investigação (RCA)</p-step>
+          <p-step [value]="3" class="fw-600">3. Plano de Ação</p-step>
+        </p-step-list>
+
+        <p-step-panels class="p-4">
+          <!-- Step 1: Origin -->
+          <p-step-panel [value]="1">
+            <ng-template #content let-activateCallback="activateCallback">
+              <div class="row g-4">
+                <div class="col-12">
+                  <label class="form-label fw-600 extra-small text-uppercase text-muted">Título do CAPA</label>
+                  <input type="text" pInputText formControlName="title" class="form-control berry-input" placeholder="Ex: Desvio de temperatura no Cold Storage B" />
+                </div>
+                
+                <div class="col-12">
+                  <label class="form-label fw-600 extra-small text-uppercase text-muted">Descrição Detalhada</label>
+                  <textarea pInputTextarea formControlName="description" rows="4" class="form-control berry-input" placeholder="Descreva o problema e seu impacto imediato..."></textarea>
+                </div>
+
+                <div class="col-md-6 text-start">
+                  <label class="form-label fw-600 extra-small text-uppercase text-muted">Fonte de Origem</label>
+                  <p-dropdown [options]="sources" formControlName="source" styleClass="w-100 berry-dropdown" appendTo="body" placeholder="Selecione..."></p-dropdown>
+                </div>
+                
+                <div class="col-md-6 text-start">
+                  <label class="form-label fw-600 extra-small text-uppercase text-muted">Criticidade</label>
+                  <p-dropdown [options]="criticalityLevels" formControlName="criticality" styleClass="w-100 berry-dropdown" appendTo="body" placeholder="Selecione..."></p-dropdown>
+                </div>
+
+                <div class="col-12 mt-4 d-flex justify-content-end">
+                  <button class="btn btn-teal px-4" (click)="activateCallback(2)" [disabled]="!capaForm.get('title')?.valid">
+                    Próximo: RCA <i class="pi pi-chevron-right ms-2"></i>
+                  </button>
+                </div>
+              </div>
+            </ng-template>
+          </p-step-panel>
+
+          <!-- Step 2: RCA (5 Whys) -->
+          <p-step-panel [value]="2">
+            <ng-template #content let-activateCallback="activateCallback">
+              <div class="row g-4 text-start">
+                <div class="col-12">
+                  <div class="ai-suggestion-card p-3 rounded-3 mb-4 d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                      <div class="ai-icon-box me-3">
+                        <i class="pi pi-sparkles text-teal"></i>
+                      </div>
+                      <div>
+                        <h6 class="mb-0 fw-700">Assistente IA</h6>
+                        <p class="text-muted small mb-0">Sugerir análise de causa raiz com base na descrição.</p>
+                      </div>
+                    </div>
+                    <button class="btn btn-light-teal btn-sm fw-700" (click)="suggestRCA()">
+                      Sugerir com IA
+                    </button>
+                  </div>
+                </div>
+
+                <div class="col-12 why-sequence">
+                  <div class="mb-3" *ngFor="let i of [1,2,3,4,5]">
+                    <div class="input-group">
+                      <span class="input-group-text bg-light border-end-0 fw-700 text-teal">{{i}}º</span>
+                      <input type="text" pInputText [formControlName]="'why'+i" class="form-control berry-input border-start-0" [placeholder]="'Por que o problema ocorreu? (Nível ' + i + ')'" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label fw-600 extra-small text-uppercase text-muted">Causa Raiz Conclusiva</label>
+                  <textarea pInputTextarea formControlName="rootCauseFinal" rows="3" class="form-control berry-input bg-light" placeholder="Conclusão final da investigação..."></textarea>
+                </div>
+
+                <div class="col-12 mt-4 d-flex justify-content-between">
+                  <button class="btn btn-light px-4" (click)="activateCallback(1)">
+                    <i class="pi pi-chevron-left me-2"></i> Voltar
+                  </button>
+                  <button class="btn btn-teal px-4" (click)="activateCallback(3)">
+                    Próximo: Plano de Ação <i class="pi pi-chevron-right ms-2"></i>
+                  </button>
+                </div>
+              </div>
+            </ng-template>
+          </p-step-panel>
+
+          <!-- Step 3: Action Plan -->
+          <p-step-panel [value]="3">
+            <ng-template #content let-activateCallback="activateCallback">
+              <div class="row g-4 text-start">
+                <div class="col-12 d-flex justify-content-between align-items-center">
+                  <h6 class="mb-0 fw-700 text-uppercase tracking-wider">Plano de Ação</h6>
+                  <button class="btn btn-light-primary btn-sm fw-600" (click)="addAction()">
+                    <i class="pi pi-plus me-1"></i> Adicionar Ação
+                  </button>
+                </div>
+
+                <div class="col-12" formArrayName="actions">
+                  <div *ngFor="let action of actions.controls; let i=index" [formGroupName]="i" class="action-card p-3 mb-3 border rounded-3 position-relative shadow-sm transition-all">
+                    <button class="btn btn-link text-danger position-absolute top-0 end-0 mt-2 me-2" (click)="removeAction(i)">
+                      <i class="pi pi-trash"></i>
+                    </button>
+                    
+                    <div class="row g-3">
+                      <div class="col-12 pe-5">
+                        <label class="form-label fw-600 extra-small text-muted">DESCRIÇÃO DA AÇÃO</label>
+                        <input pInputText formControlName="description" class="form-control berry-input" placeholder="O que será feito?" />
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label fw-600 extra-small text-muted">TIPO</label>
+                        <p-dropdown [options]="[{label:'Corretiva',value:'CORRECTIVE'},{label:'Preventiva',value:'PREVENTIVE'}]" formControlName="type" styleClass="w-100 berry-dropdown" appendTo="body"></p-dropdown>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label fw-600 extra-small text-muted">RESPONSÁVEL</label>
+                        <input pInputText formControlName="responsible" class="form-control berry-input" placeholder="Executor" />
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label fw-600 extra-small text-muted">PRAZO</label>
+                        <input pInputText formControlName="deadline" class="form-control berry-input" placeholder="YYYY-MM-DD" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 mt-4 d-flex justify-content-between">
+                  <button class="btn btn-light px-4" (click)="activateCallback(2)">
+                    <i class="pi pi-chevron-left me-2"></i> Voltar
+                  </button>
+                  <button class="btn btn-primary px-5 shadow" (click)="saveCapa()" [disabled]="!capaForm.valid">
+                    <i class="pi pi-check-circle me-2"></i> Finalizar e Abrir CAPA
+                  </button>
+                </div>
+              </div>
+            </ng-template>
+          </p-step-panel>
+        </p-step-panels>
+      </p-stepper>
+    </form>
+  </div>
+</div>

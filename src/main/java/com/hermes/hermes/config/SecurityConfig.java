@@ -39,67 +39,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/login", "/debug/**", "/css/**", "/js/**", "/webjars/**", "/images/**", "/plugins/**", "/dist/**", "/favicon.ico").permitAll()
-                .anyRequest().access((authentication, context) -> {
-                    Authentication auth = authentication.get();
-                    if (auth == null || !auth.isAuthenticated()) {
-                        return new AuthorizationDecision(false);
-                    }
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> {}) // Enable CORS via WebConfig
+                .headers(headers -> headers.disable())
 
-                    // Debug Log
-                    System.out.println("DEBUG: Accessing " + context.getRequest().getRequestURI() + " | User: " + auth.getName() + " | Authorities: " + auth.getAuthorities());
-
-                    // Block Anonymous purely (optional if handle isAuthenticated correctly)
-                    if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ANONYMOUS"))) {
-                        return new AuthorizationDecision(false);
-                    }
-
-                    // Global ADMIN Override
-                    boolean isAdmin = auth.getAuthorities().stream()
-                            .map(GrantedAuthority::getAuthority)
-                            .anyMatch(a -> a.toUpperCase().equals("ROLE_ADMIN"));
-                    if (isAdmin) {
-                        System.out.println("DEBUG: User is ADMIN. Granting access.");
-                        return new AuthorizationDecision(true);
-                    }
-
-                    // Check Database Rules using Spring Web PathPatterns
-                    PathContainer path = PathContainer.parsePath(context.getRequest().getRequestURI());
-                    List<SecurityRule> rules = securityRuleRepository.findAll();
-                    
-                    for (SecurityRule rule : rules) {
-                        try {
-                            if (parser.parse(rule.getUrlPattern()).matches(path)) {
-                                String requiredRole = rule.getRequiredRole();
-                                if ("PERMIT_ALL".equalsIgnoreCase(requiredRole)) return new AuthorizationDecision(true);
-                                
-                                boolean hasRole = auth.getAuthorities().stream()
-                                        .map(GrantedAuthority::getAuthority)
-                                        .anyMatch(a -> a.equals("ROLE_" + requiredRole));
-                                if (hasRole) return new AuthorizationDecision(true);
-                            }
-                        } catch (Exception e) {
-                            // Ignorar patterns invlidos no banco
-                        }
-                    }
-
-                    return new AuthorizationDecision(false);
-                })
-                )
-                .formLogin((form) -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/", true)
-                .failureUrl("/login?error=true")
-                .permitAll()
-                )
-                .logout((logout) -> logout
-                .logoutSuccessUrl("/login?logout=true")
-                .permitAll()
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint((request, response, authException) -> 
+                                response.sendError(org.springframework.http.HttpStatus.UNAUTHORIZED.value(), "Unauthorized"))
                 );
 
+
         return http.build();
+
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

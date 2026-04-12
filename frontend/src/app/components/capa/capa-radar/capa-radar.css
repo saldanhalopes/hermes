@@ -1,0 +1,41 @@
+/* CAPA Radar Berry Style */
+.capa-radar-view {
+  animation: fadeIn 0.4s ease-out;
+  background: #f4f7fa;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fw-700 { font-weight: 700; }
+.fw-800 { font-weight: 800; }
+.text-teal { color: var(--primary) !important; }
+
+/* KPI Cards */
+.kpi-card {
+  background: #ffffff !important;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+}
+
+.kpi-card .text-muted {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+.kpi-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Berry Card Header Refinement */
+.berry-card-header {
+  background: var(--grey-50) !important;
+  border-bottom: 1px solid var(--grey-200) !important;
+  color: #000000 !important;
+}
+
+.berry-card-header h5 {
+    color: #000000 !important;
+}

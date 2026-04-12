@@ -14,9 +14,8 @@ import java.io.InputStream;
 public class FirebaseConfig {
 
     @Bean
-    public FirebaseApp firebaseApp() throws IOException {
+    public FirebaseApp firebaseApp() {
         // The service account file is in the root of the project.
-        // For Spring Boot running from the root, we can use a FileInputStream.
         String path = "hermes-c8b6e-firebase-adminsdk-fbsvc-1669ce4bc9.json";
         
         try (InputStream serviceAccount = new FileInputStream(path)) {
@@ -30,8 +29,10 @@ public class FirebaseConfig {
                 return FirebaseApp.getInstance();
             }
         } catch (IOException e) {
-            System.err.println("Error initializing Firebase: " + e.getMessage());
-            throw e;
+            System.err.println("--- WARNING: Firebase Service Account file NOT FOUND! (" + path + ") ---");
+            System.err.println("--- Firebase features will be disabled, but application will continue. ---");
+            return null;
         }
     }
+
 }

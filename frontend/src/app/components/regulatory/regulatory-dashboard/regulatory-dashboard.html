@@ -1,0 +1,138 @@
+<div class="regulatory-dashboard-view px-0">
+    <!-- Header Section -->
+    <div class="row align-items-center mb-4">
+        <div class="col">
+            <h3 class="mb-0 fw-800 text-primary">Cockpit de Assuntos Regulatórios</h3>
+            <p class="text-muted small mb-0 fw-500">Monitoramento global de submissões e variabilidades pós-registro.</p>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary fw-600 px-4 rounded-3 shadow-sm" [routerLink]="['/regulatory/new']">
+                <i class="pi pi-plus me-2"></i>Nova Submissão
+            </button>
+        </div>
+    </div>
+
+    <!-- Metrics Grid -->
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="berry-card berry-metric-card p-4 border-start border-primary border-4 h-100 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="p-2 bg-light rounded-3 text-primary">
+                        <i class="pi pi-globe fs-4"></i>
+                    </div>
+                    <span class="extra-small font-bold text-muted uppercase tracking-widest">Global</span>
+                </div>
+                <div class="d-flex flex-column">
+                    <span class="text-muted small fw-600">Total Submissões</span>
+                    <span class="h2 font-black text-primary mb-0">{{ submissions.length }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="berry-card berry-metric-card p-4 border-start border-teal border-4 h-100 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="p-2 bg-teal-soft rounded-3 text-teal">
+                        <i class="pi pi-clock fs-4"></i>
+                    </div>
+                    <span class="extra-small font-bold text-teal opacity-75 uppercase tracking-widest">Ativo</span>
+                </div>
+                <div class="d-flex flex-column">
+                    <span class="text-teal small fw-600">Em Aprovação</span>
+                    <span class="h2 font-black text-teal mb-0">{{ pendingCount }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="berry-card berry-metric-card p-4 border-start border-success border-4 h-100 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="p-2 bg-success-light rounded-3 text-success">
+                        <i class="pi pi-check-circle fs-4"></i>
+                    </div>
+                    <span class="extra-small font-bold text-success opacity-75 uppercase tracking-widest">Sucesso</span>
+                </div>
+                <div class="d-flex flex-column">
+                    <span class="text-success small fw-600">Aprovadas (Ano)</span>
+                    <span class="h2 font-black text-success mb-0">{{ approvedCount }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="berry-card berry-metric-card p-4 border-start border-warning border-4 h-100 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="p-2 bg-warning-light rounded-3 text-warning">
+                        <i class="pi pi-exclamation-triangle fs-4"></i>
+                    </div>
+                    <span class="extra-small font-bold text-warning opacity-75 uppercase tracking-widest">Atenção</span>
+                </div>
+                <div class="d-flex flex-column">
+                    <span class="text-warning small fw-600">Exigências Ativas</span>
+                    <span class="h2 font-black text-warning mb-0">{{ queryCount }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-lg-8">
+            <div class="berry-card p-4 h-100 shadow-sm">
+                <h6 class="text-primary fw-800 text-uppercase tracking-wider mb-4">
+                    <i class="pi pi-chart-bar me-2"></i> Estatus por Mercado Global
+                </h6>
+                <p-chart type="bar" [data]="marketChartData" [options]="chartOptions" height="300px"></p-chart>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="berry-card p-4 h-100 shadow-sm">
+                <h6 class="text-primary fw-800 text-uppercase tracking-wider mb-4">
+                    <i class="pi pi-chart-pie me-2"></i> Mix de Status
+                </h6>
+                <p-chart type="pie" [data]="statusChartData" [options]="chartOptions" height="300px"></p-chart>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline Section -->
+    <div class="berry-card p-4 shadow-sm">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h5 class="fw-800 text-primary mb-1">Histórico de Movimentações</h5>
+                <p class="text-muted small mb-0">Últimas atualizações realizadas pela equipe regulatória.</p>
+            </div>
+            <button class="btn btn-link text-primary fw-700 text-decoration-none" [routerLink]="['/regulatory/list']">
+                Ver Mais <i class="pi pi-chevron-right ms-1"></i>
+            </button>
+        </div>
+
+        <p-timeline [value]="submissions.slice(0, 5)" align="alternate" styleClass="customized-timeline-berry">
+            <ng-template pTemplate="marker" let-submission>
+                <div class="d-flex align-items-center justify-content-center border-4 border-white shadow-sm rounded-circle"
+                     [style.background-color]="getStatusColor(submission.status)"
+                     style="width: 40px; height: 40px;">
+                    <i [class]="getStatusIcon(submission.status)" class="text-white small"></i>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="content" let-submission>
+                <div class="mb-4 timeline-item-card">
+                    <div class="berry-card p-4 bg-light border-0">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="extra-small fw-800 text-primary uppercase">{{ submission.submissionNumber }}</span>
+                            <span class="extra-small text-muted fw-600">{{ (submission.submissionDate | date:'dd MMM yyyy') || '' }}</span>
+                        </div>
+                        <h6 class="fw-700 text-dark mb-2">{{ submission.title }}</h6>
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <i class="pi pi-map-marker text-primary extra-small"></i>
+                            <span class="extra-small text-muted fw-700">{{ submission.market }} - {{ submission.authority }}</span>
+                        </div>
+                        <button class="btn btn-light btn-sm fw-700 w-100 rounded-3">
+                            Ver Dossier <i class="pi pi-external-link ms-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </ng-template>
+        </p-timeline>
+    </div>
+</div>

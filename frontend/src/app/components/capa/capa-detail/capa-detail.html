@@ -1,0 +1,120 @@
+<div class="page-view-detail px-0" *ngIf="!loading">
+  <!-- Header Section -->
+  <div class="row align-items-center mb-4">
+    <div class="col">
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <button class="btn btn-light btn-sm rounded-circle shadow-sm" [routerLink]="['/capa']">
+          <i class="pi pi-arrow-left"></i>
+        </button>
+        <h3 class="mb-0 fw-700">{{ capa.capaNumber }}</h3>
+        <p-badge [value]="capa.status" [severity]="getStatusSeverity(capa.status)" class="ms-2"></p-badge>
+        <span class="gxp-badge ms-2">GxP Trusted</span>
+      </div>
+      <p class="text-muted small mb-0 ms-5">{{ capa.title }}</p>
+    </div>
+    <div class="col-auto">
+      <div class="d-flex gap-2">
+        <button class="btn btn-light fw-600 px-3 rounded-3 shadow-sm border">
+          <i class="pi pi-verified me-2 text-primary"></i>Assinatura
+        </button>
+        <button class="btn btn-success fw-600 px-3 rounded-3 shadow-sm" *ngIf="capa.status === 'EFFECTIVENESS_VERIFICATION'">
+          <i class="pi pi-check-square me-2"></i>Encerrar
+        </button>
+        <button class="btn btn-primary fw-600 px-3 rounded-3 shadow-sm" *ngIf="capa.status === 'INVESTIGATION'">
+          <i class="pi pi-play me-2"></i>Iniciar Plano
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Center Content: Investigation & Actions -->
+    <div class="col-lg-8">
+      <div class="berry-card p-0 overflow-hidden shadow-sm mb-4">
+        <div class="berry-card-header p-3 border-bottom bg-light">
+          <h5 class="mb-0 fw-700"><i class="pi pi-search me-2 text-primary"></i>Investigação de Causa Raiz (5 Whys)</h5>
+        </div>
+        <div class="p-4">
+          <div class="rca-step-view mb-3 pb-3 border-bottom border-light" *ngFor="let why of [capa.why1, capa.why2, capa.why3, capa.why4, capa.why5]; let i = index">
+            <div class="d-flex gap-3 align-items-center">
+              <div class="why-number p-2 px-3 bg-light rounded-3 text-primary fw-800 shadow-sm">#{{i+1}}</div>
+              <div class="flex-grow-1">
+                <div class="text-muted extra-small fw-700 text-uppercase tracking-wider mb-1">Por quê?</div>
+                <div class="fw-600 text-dark">{{ why || 'Confirmação pendente...' }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 p-4 rounded-4 bg-teal-soft shadow-inner">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <i class="pi pi-bolt text-teal"></i>
+              <span class="text-teal small fw-800 text-uppercase tracking-widest">Causa Raiz Conclusiva</span>
+            </div>
+            <p class="mb-0 fw-700 text-primary h5">{{ capa.rootCauseFinal }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="berry-card p-0 overflow-hidden shadow-sm">
+        <div class="berry-card-header p-3 border-bottom bg-light">
+          <h5 class="mb-0 fw-700"><i class="pi pi-list me-2 text-primary"></i>Plano de Ação Corretiva e Preventiva</h5>
+        </div>
+        <p-table [value]="capa.actions" styleClass="p-datatable-modern">
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 120px">Tipo</th>
+              <th>Descrição</th>
+              <th style="width: 150px">Responsável</th>
+              <th style="width: 120px">Prazo</th>
+              <th style="width: 80px">Status</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-action>
+            <tr>
+              <td>
+                <span class="status-pill" [class.success]="action.type === 'PREVENTIVE'" [class.warning]="action.type === 'CORRECTIVE'">
+                  {{ action.type }}
+                </span>
+              </td>
+              <td class="fw-500">{{ action.description }}</td>
+              <td class="small">{{ action.responsible }}</td>
+              <td class="small">{{ action.deadline | date:'dd/MM/yyyy' }}</td>
+              <td class="text-center">
+                <i class="pi" [ngClass]="action.completed ? 'pi-check-circle text-teal' : 'pi-clock text-muted'" style="font-size: 1.2rem;"></i>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+
+    <!-- Sidebar: Audit Timeline -->
+    <div class="col-lg-4">
+      <div class="berry-card p-0 overflow-hidden shadow-sm sticky-top" style="top: 1rem;">
+        <div class="berry-card-header p-3 border-bottom bg-light">
+          <h5 class="mb-0 fw-700"><i class="pi pi-history me-2 text-primary"></i>Rastro de Auditoria</h5>
+        </div>
+        <div class="p-4">
+          <p-timeline [value]="auditTimeline" styleClass="customized-timeline">
+            <ng-template pTemplate="marker" let-event>
+              <span class="timeline-marker shadow-sm" [style.backgroundColor]="event.color">
+                <i [class]="event.icon" style="font-size: 0.8rem; color: white;"></i>
+              </span>
+            </ng-template>
+            <ng-template pTemplate="content" let-event>
+              <div class="timeline-content pb-4">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="text-dark fw-700 small">{{ event.status }}</span>
+                  <span class="text-muted extra-small">{{ event.date | date:'dd/MM HH:mm' }}</span>
+                </div>
+                <p class="text-muted extra-small mb-0">{{ event.desc }}</p>
+                <div class="extra-small text-primary mt-1 fw-600" *ngIf="event.user">
+                  <i class="pi pi-user me-1"></i>{{ event.user }}
+                </div>
+              </div>
+            </ng-template>
+          </p-timeline>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,105 @@
+<div class="berry-card shadow-sm border-0">
+    <div class="d-flex align-items-center mb-4 border-bottom pb-3">
+        <h5 class="mb-0 fw-700 text-secondary">{{ editMode ? 'Editar Mudança' : 'Nova Solicitação de Mudança' }}</h5>
+    </div>
+    
+    <div class="berry-form-body">
+        <div class="row g-4">
+            <!-- Basic Info -->
+            <div class="col-12 col-md-6">
+                <label for="title" class="form-label fw-600 extra-small text-uppercase text-muted">Título da Mudança</label>
+                <input pInputText id="title" [(ngModel)]="request.title" 
+                       class="form-control berry-input" 
+                       placeholder="Ex: Alteração do processo de secagem">
+            </div>
+            
+            <div class="col-12 col-md-6">
+                <label for="unit" class="form-label fw-600 extra-small text-uppercase text-muted">Unidade</label>
+                <p-select id="unit" [options]="units" [(ngModel)]="request.unit" 
+                          styleClass="w-100 berry-dropdown" 
+                          placeholder="Selecione a Unidade"></p-select>
+            </div>
+
+
+            <div class="col-12 col-md-4">
+                <label for="resp" class="form-label fw-600 extra-small text-uppercase text-muted">Responsável</label>
+                <input pInputText id="resp" [(ngModel)]="request.responsibleName" 
+                       class="form-control berry-input">
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label for="area" class="form-label fw-600 extra-small text-uppercase text-muted">Área</label>
+                <input pInputText id="area" [(ngModel)]="request.responsibleArea" 
+                       class="form-control berry-input">
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label for="crit" class="form-label fw-600 extra-small text-uppercase text-muted">Criticidade</label>
+                <p-select id="crit" [options]="criticalities" [(ngModel)]="request.criticality" 
+                          styleClass="w-100 berry-dropdown"></p-select>
+            </div>
+
+            <!-- Classification -->
+            <div class="col-12 col-md-6">
+                <label for="type" class="form-label fw-600 extra-small text-uppercase text-muted">Tipo de Mudança</label>
+                <p-select id="type" [options]="types" [(ngModel)]="request.changeType" 
+                          styleClass="w-100 berry-dropdown"></p-select>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label for="subtype" class="form-label fw-600 extra-small text-uppercase text-muted">Subtipo</label>
+                <p-select id="subtype" [options]="subtypes" [(ngModel)]="request.changeSubtype" 
+                          styleClass="w-100 berry-dropdown"></p-select>
+            </div>
+
+
+            <!-- Context -->
+            <div class="col-12">
+                <label for="current" class="form-label fw-600 extra-small text-uppercase text-muted">Situação Atual</label>
+                <textarea pInputTextarea id="current" rows="3" [(ngModel)]="request.currentSituation" 
+                          class="form-control berry-input" 
+                          placeholder="Descreva o estado atual..."></textarea>
+            </div>
+
+            <div class="col-12">
+                <label for="proposed" class="form-label fw-600 extra-small text-uppercase text-muted">Situação Proposta</label>
+                <textarea pInputTextarea id="proposed" rows="3" [(ngModel)]="request.proposedSituation" 
+                          class="form-control berry-input" 
+                          placeholder="Descreva as alterações pretendidas..."></textarea>
+            </div>
+
+            <div class="col-12">
+                <label for="just" class="form-label fw-600 extra-small text-uppercase text-muted">Justificativa</label>
+                <textarea pInputTextarea id="just" rows="3" [(ngModel)]="request.justification" 
+                          class="form-control berry-input" 
+                          placeholder="Por que esta mudança é necessária?"></textarea>
+            </div>
+
+
+            <!-- Emergency -->
+            <div class="col-12">
+                <div class="d-flex align-items-center p-3 rounded-3" 
+                     [style.background]="request.emergency ? 'rgba(239, 68, 68, 0.05)' : 'transparent'"
+                     style="border: 1px dashed transparent; transition: all 0.3s ease;"
+                     [class.border-danger]="request.emergency">
+                    <p-checkbox [(ngModel)]="request.emergency" [binary]="true" id="emergency"></p-checkbox>
+                    <label for="emergency" class="ms-3 mb-0 fw-700" [class.text-danger]="request.emergency">
+                        {{ request.emergency ? 'ALERTA: ESTA É UMA MUDANÇA DE EMERGÊNCIA' : 'Mudança de Emergência?' }}
+                    </label>
+                </div>
+            </div>
+
+            <div *ngIf="request.emergency" class="col-12">
+                <label for="reason" class="form-label fw-600 extra-small text-uppercase text-muted text-danger">Motivo da Emergência</label>
+                <textarea pInputTextarea id="reason" rows="2" [(ngModel)]="request.emergencyReason" 
+                          class="form-control berry-input border-danger shadow-sm"></textarea>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 mt-5 pt-4 border-top">
+        <p-button label="Cancelar" icon="pi pi-times" [text]="true" severity="secondary" routerLink="/change-control"></p-button>
+        <p-button label="Salvar Mudança" icon="pi pi-check" styleClass="berry-btn-primary px-4" (onClick)="save()" [loading]="loading"></p-button>
+    </div>
+</div>

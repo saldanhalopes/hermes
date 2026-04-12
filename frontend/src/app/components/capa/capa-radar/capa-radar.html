@@ -1,0 +1,86 @@
+<div class="capa-radar-view px-0">
+  <!-- Header Section -->
+  <div class="row align-items-center mb-4">
+    <div class="col">
+      <h3 class="mb-0 fw-800 text-primary">Radar de Qualidade (CAPA)</h3>
+      <p class="text-muted small mb-0 fw-500">Visão executiva da eficácia das ações corretivas e preventivas em tempo real.</p>
+    </div>
+    <div class="col-auto">
+      <button class="btn btn-light fw-600 px-3 rounded-3 shadow-sm" [routerLink]="['/capa']">
+        <i class="pi pi-list me-2"></i>Lista Completa
+      </button>
+    </div>
+  </div>
+
+  <!-- KPIs Grid -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-3">
+      <div class="berry-card kpi-card p-4 h-100 border-0 shadow-sm border-start border-primary border-4 rounded-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted small fw-800 text-uppercase tracking-wider">CAPAs Abertas</span>
+          <div class="p-2 bg-primary-light rounded-circle">
+            <i class="pi pi-folder-open text-primary fs-5"></i>
+          </div>
+        </div>
+        <div class="h2 mb-0 fw-800 text-primary">{{ kpis.totalOpen }}</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="berry-card kpi-card p-4 h-100 border-0 shadow-sm border-start border-danger border-4 rounded-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted small fw-800 text-uppercase tracking-wider">Ações Atrasadas</span>
+          <div class="p-2 bg-danger-light rounded-circle">
+            <i class="pi pi-exclamation-triangle text-danger fs-5"></i>
+          </div>
+        </div>
+        <div class="h2 mb-0 fw-800 text-danger">{{ kpis.overdue }}</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="berry-card kpi-card p-4 h-100 border-0 shadow-sm border-start border-teal border-4 rounded-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted small fw-800 text-uppercase tracking-wider">Tempo Médio</span>
+          <div class="p-2 bg-teal-soft rounded-circle">
+            <i class="pi pi-clock text-teal fs-5"></i>
+          </div>
+        </div>
+        <div class="h2 mb-0 fw-800 text-teal">{{ kpis.avgClosureTime }}</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="berry-card kpi-card p-4 h-100 border-0 shadow-sm border-start border-success border-4 rounded-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted small fw-800 text-uppercase tracking-wider">Taxa de Eficácia</span>
+          <div class="p-2 bg-success-light rounded-circle">
+            <i class="pi pi-check-circle text-success fs-5"></i>
+          </div>
+        </div>
+        <div class="h2 mb-0 fw-800 text-success">{{ kpis.investigationProgress }}%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="row g-4">
+    <div class="col-md-5">
+      <div class="berry-card p-0 overflow-hidden shadow-sm h-100">
+        <div class="berry-card-header p-3 border-bottom bg-light">
+          <h5 class="mb-0 fw-700">Distribuição por Status</h5>
+        </div>
+        <div class="p-4 d-flex align-items-center justify-content-center">
+          <p-chart type="pie" [data]="statusChartData" [options]="chartOptions" width="300px"></p-chart>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-7">
+      <div class="berry-card p-0 overflow-hidden shadow-sm h-100">
+        <div class="berry-card-header p-3 border-bottom bg-light">
+          <h5 class="mb-0 fw-700">Análise de Origem</h5>
+        </div>
+        <div class="p-4">
+          <p-chart type="bar" [data]="sourceChartData" [options]="chartOptions" height="300px"></p-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

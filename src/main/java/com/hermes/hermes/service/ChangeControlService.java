@@ -26,6 +26,7 @@ public class ChangeControlService {
     private final PushNotificationService pushNotificationService;
     private final ApplicationContext applicationContext;
     private final UserRepository userRepository;
+    private final RegulatoryService regulatoryService;
 
     public ChangeControlService(ChangeRequestRepository changeRequestRepository, 
                                 ImpactAnalysisRepository impactAnalysisRepository, 
@@ -36,7 +37,8 @@ public class ChangeControlService {
                                 PushSubscriptionRepository pushSubscriptionRepository, 
                                 PushNotificationService pushNotificationService, 
                                 ApplicationContext applicationContext, 
-                                UserRepository userRepository) {
+                                UserRepository userRepository,
+                                RegulatoryService regulatoryService) {
         this.changeRequestRepository = changeRequestRepository;
         this.impactAnalysisRepository = impactAnalysisRepository;
         this.impactSubAreaRepository = impactSubAreaRepository;
@@ -47,6 +49,7 @@ public class ChangeControlService {
         this.pushNotificationService = pushNotificationService;
         this.applicationContext = applicationContext;
         this.userRepository = userRepository;
+        this.regulatoryService = regulatoryService;
     }
 
     // =========================================================
@@ -261,6 +264,30 @@ public class ChangeControlService {
     }
 
     @Transactional
+    public void approveWithSignature(Long requestId, String password) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) {
+            throw new RuntimeException("Usuário não autenticado.");
+        }
+
+        User user = userRepository.findByUsername(auth.getName())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+
+        // Validação de senha GxP (simplificada para o demo)
+        if (!user.getPassword().equals(password)) {
+            throw new RuntimeException("Senha de assinatura eletrônica inválida.");
+        }
+
+        ChangeRequest request = getById(requestId);
+        
+        // Registro de auditoria manual se necessário (Envers já captura a mudança de status)
+        request.setStatus(ChangeStatus.EXECUTION);
+        changeRequestRepository.save(request);
+        
+        broadcastUpdate();
+    }
+
+    @Transactional
     public void completeExecution(Long requestId) {
         List<ActionPlanTask> tasks = actionPlanTaskRepository.findByChangeRequestId(requestId);
         boolean allDone = tasks.stream().allMatch(t -> "Concluído".equals(t.getStatus()));
@@ -274,6 +301,9 @@ public class ChangeControlService {
 
     @Transactional
     public void closeChange(Long requestId) {
+        if (regulatoryService.hasPendingSubmissions(requestId)) {
+            throw new RuntimeException("Não é possível encerrar o CM pois existem submissões regulatórias pendentes.");
+        }
         ChangeRequest request = getById(requestId);
         request.setStatus(ChangeStatus.CLOSED);
         changeRequestRepository.save(request);

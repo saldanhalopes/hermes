@@ -1,0 +1,204 @@
+<div *ngIf="request" class="page-view-detail px-0">
+  <!-- Header Section -->
+  <div class="row align-items-center mb-4">
+    <div class="col">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-light rounded-circle p-2 shadow-sm" routerLink="/change-control">
+          <i class="pi pi-arrow-left"></i>
+        </button>
+        <div>
+          <h3 class="mb-0 fw-700">{{ request.cmNumber }}</h3>
+          <p class="text-muted small mb-0">{{ request.title }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-auto">
+      <div class="d-flex gap-2">
+        <button *ngIf="request.status === 'ACTION_PLAN_APPROVAL'" 
+                class="btn btn-success fw-600 px-3 rounded-3 shadow-sm" 
+                (click)="onApproveClick()">
+          <i class="pi pi-check-square me-2"></i>Aprovar
+        </button>
+        <button class="btn btn-primary fw-600 px-3 rounded-3 shadow-sm" 
+                [routerLink]="['/change-control/edit', request.id]">
+          <i class="pi pi-pencil me-2"></i>Editar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overview Chart Card -->
+  <div class="berry-card mb-4 p-4 text-center">
+    <div #mermaidContainer class="mermaid-container d-flex justify-content-center"></div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Main Content Column -->
+    <div class="col-12 col-lg-8">
+      <div class="berry-card p-0 overflow-hidden mb-4">
+        <div class="p-4 border-bottom bg-light">
+          <h5 class="mb-0 fw-700">Informações Gerais</h5>
+        </div>
+        <div class="p-4">
+        <div class="p-4">
+          <div class="row">
+            <div class="col-6 col-md-3 mb-4">
+              <label class="text-muted small d-block mb-1 fw-600">Unidade</label>
+              <span class="fw-500">{{ request.unit }}</span>
+            </div>
+            <div class="col-6 col-md-3 mb-4">
+              <label class="text-muted small d-block mb-1 fw-600">Criticidade</label>
+              <p-tag [value]="request.criticality" [severity]="request.criticality === 'Alta' ? 'danger' : 'warning'"></p-tag>
+            </div>
+            <div class="col-6 col-md-3 mb-4">
+              <label class="text-muted small d-block mb-1 fw-600">Tipo</label>
+              <span class="fw-500">{{ request.changeType }}</span>
+            </div>
+            <div class="col-6 col-md-3 mb-4">
+              <label class="text-muted small d-block mb-1 fw-600">Status</label>
+              <p-tag [value]="request.status" severity="info"></p-tag>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="fw-700 text-teal mb-2">Situação Atual</h6>
+            <div class="p-4 bg-light rounded-4 text-muted border border-light shadow-sm">
+              {{ request.currentSituation }}
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="fw-700 text-teal mb-2">Situação Proposta</h6>
+            <div class="p-4 bg-light rounded-4 text-muted border border-light shadow-sm">
+              {{ request.proposedSituation }}
+            </div>
+          </div>
+
+          <div>
+            <h6 class="fw-700 text-teal mb-2">Justificativa</h6>
+            <div class="p-4 bg-light rounded-4 text-muted border border-light shadow-sm">
+              {{ request.justification }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Plan Card -->
+      <div class="berry-card p-0 overflow-hidden mb-4">
+        <div class="p-4 border-bottom bg-light d-flex justify-content-between align-items-center">
+          <h5 class="mb-0 fw-700">Plano de Ação</h5>
+          <span class="badge bg-secondary-light text-secondary rounded-pill px-3">{{ request.actionPlanTasks?.length || 0 }} Tarefas</span>
+        </div>
+        <div class="p-0">
+          <p-table [value]="request.actionPlanTasks || []" styleClass="p-datatable-modern">
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="padding-left: 24px">Tarefa</th>
+                <th>Responsável</th>
+                <th style="width: 100px" class="text-center">Status</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-task>
+              <tr>
+                <td style="padding-left: 24px" class="fw-500">{{ task.description }}</td>
+                <td>{{ task.responsible }}</td>
+                <td class="text-center">
+                  <i [class]="task.completed ? 'pi pi-check-circle text-success' : 'pi pi-clock text-warning'" 
+                     style="font-size: 1.2rem"></i>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar Column -->
+    <div class="col-12 col-lg-4">
+      <!-- Impact Assessment Card -->
+      <div class="berry-card p-0 overflow-hidden mb-4 border-primary-light">
+        <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+          <h5 class="mb-0 fw-700">Avaliações de Impacto</h5>
+          <span class="gxp-badge">GxP Restricted</span>
+        </div>
+        
+        <p-accordion [multiple]="true" class="berry-accordion">
+          <p-accordionTab *ngFor="let analysis of request.impactAnalyses">
+            <ng-template pTemplate="header">
+              <div class="d-flex justify-content-between align-items-center w-100 pe-3">
+                <span class="fw-600">{{ analysis.areaName }}</span>
+                <span [class]="analysis.completed ? 'status-pill success' : 'status-pill warning'">
+                  {{ analysis.completed ? 'OK' : '...' }}
+                </span>
+              </div>
+            </ng-template>
+            <div class="p-2 text-muted small">
+              {{ analysis.comment || 'Aguardando avaliação da área.' }}
+            </div>
+          </p-accordionTab>
+
+          <p-accordionTab [selected]="true">
+            <ng-template pTemplate="header">
+              <div class="d-flex align-items-center gap-2">
+                <i class="pi pi-sparkles text-primary"></i>
+                <span class="fw-700">Hermes Genius AI</span>
+              </div>
+            </ng-template>
+            <div class="p-3">
+              <div class="summary-box p-3 bg-teal-soft rounded-4 mb-3 border-0">
+                <label class="small text-muted mb-2 d-block fw-700 uppercase tracking-wider">Sugestão de Impacto GxP</label>
+                <p class="small mb-0 opacity-75">Nossa inteligência analisa o contexto técnico para identificar riscos regulatórios ocultos.</p>
+              </div>
+              <button class="btn btn-primary w-100 mb-3 rounded-3 intelligence-pulse py-2" 
+                      (click)="getAISuggestion(request)" 
+                      [disabled]="aiLoading">
+                <i class="pi pi-bolt me-2"></i>
+                {{ aiLoading ? 'Analisando...' : 'Consultar Inteligência' }}
+              </button>
+              <textarea pInputTextarea [(ngModel)]="request.impactAnalysis" rows="6" 
+                        class="form-control text-small berry-input" 
+                        placeholder="A análise de IA aparecerá aqui..."></textarea>
+            </div>
+          </p-accordionTab>
+
+          <p-accordionTab header="🛡️ Audit Trail Certificado">
+            <div class="audit-timeline-compact p-2">
+              <app-audit-timeline [requestId]="request.id!"></app-audit-timeline>
+            </div>
+          </p-accordionTab>
+        </p-accordion>
+      </div>
+
+      <!-- Regulatory Status Card -->
+      <div class="berry-card p-0 overflow-hidden">
+        <div class="p-4 border-bottom d-flex align-items-center gap-2">
+          <i class="pi pi-globe text-primary"></i>
+          <h5 class="mb-0 fw-700">Estatus Regulatório</h5>
+        </div>
+        <div class="p-4">
+          <div *ngIf="regulatorySubmissions.length === 0" class="text-center py-3">
+            <p class="text-muted small mb-0">Nenhuma submissão vinculada.</p>
+          </div>
+          <div *ngFor="let reg of regulatorySubmissions" 
+               class="reg-item p-3 mb-2 rounded-3 border bg-light hover-shadow transition-all cursor-pointer"
+               [routerLink]="['/regulatory', reg.id]">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="small fw-700 text-uppercase">{{ reg.submissionNumber }}</span>
+              <p-tag [value]="reg.status" [severity]="reg.status === 'APPROVED' ? 'success' : 'info'"></p-tag>
+            </div>
+            <div class="small fw-600">{{ reg.market }} - {{ reg.authority }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>
+<app-signature-dialog 
+    [visible]="showSignatureModal" 
+    [loading]="aiLoading"
+    intent="Aprovação de Implementação"
+    (onConfirm)="confirmSignature($event)"
+    (onCancel)="showSignatureModal = false">
+</app-signature-dialog>

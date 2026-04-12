@@ -1,5 +1,6 @@
 package com.hermes.hermes.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,6 +38,7 @@ public class ImpactSubArea {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_analysis_id", nullable = false)
+    @JsonIgnore
     private ImpactAnalysis parentAnalysis;
 
     @Column(name = "sub_area_name", nullable = false)

@@ -45,6 +45,45 @@ public class AuditService {
         return auditLogs.stream().limit(limit).toList();
     }
 
+    public List<AuditLogDTO> getRevisionHistory(Long requestId) {
+        AuditReader auditReader = AuditReaderFactory.get(entityManager);
+        List<AuditLogDTO> history = new ArrayList<>();
+        
+        AuditQuery query = auditReader.createQuery()
+                .forRevisionsOfEntity(ChangeRequest.class, false, true)
+                .add(AuditEntity.id().eq(requestId));
+        
+        List<Object[]> results = query.getResultList();
+        
+        for (Object[] result : results) {
+            Object entity = result[0];
+            Object revisionEntity = result[1];
+            RevisionType revisionType = (RevisionType) result[2];
+
+            long revId = 0;
+            LocalDateTime timestamp = LocalDateTime.now();
+            
+            if (revisionEntity instanceof org.hibernate.envers.DefaultRevisionEntity dre) {
+                revId = dre.getId();
+                timestamp = LocalDateTime.ofInstant(Instant.ofEpochMilli(dre.getTimestamp()), TimeZone.getDefault().toZoneId());
+            }
+
+            history.add(AuditLogDTO.builder()
+                    .revisionId(revId)
+                    .entityName("Solicitação de Mudança")
+                    .entityId(String.valueOf(requestId))
+                    .operation(convertRevisionType(revisionType))
+                    .timestamp(timestamp)
+                    .user("Sistema") // TODO: Integrate with actual revision user if available
+                    .details(entity.toString())
+                    .build());
+        }
+        
+        return history.stream()
+                .sorted(Comparator.comparing(AuditLogDTO::getRevisionId).reversed())
+                .toList();
+    }
+
     public List<AccessLog> getRecentAccessLogs() {
         return accessLogRepository.findTop100ByOrderByTimestampDesc();
     }

@@ -1,0 +1,67 @@
+.submission-wizard-view {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.berry-card {
+    background: white;
+    border: 1px solid var(--grey-200);
+    border-radius: 12px;
+}
+
+.berry-input {
+    border: 1px solid var(--grey-200);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.berry-input:focus {
+    border-color: var(--primary-400);
+    box-shadow: 0 0 0 3px var(--primary-50);
+    outline: none;
+}
+
+::ng-deep .berry-modern-stepper .p-stepper-number {
+    background: var(--grey-100);
+    color: var(--grey-600);
+    font-weight: 700;
+}
+
+::ng-deep .berry-modern-stepper .p-stepper-header.p-highlight .p-stepper-number {
+    background: var(--primary-600) !important;
+    color: white !important;
+}
+
+.gxp-info-box-berry {
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.05);
+}
+
+.summary-card-berry {
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.berry-button {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.2s;
+}
+
+.shadow-teal {
+    box-shadow: 0 4px 14px 0 rgba(13, 148, 136, 0.39);
+}
+
+::ng-deep .p-dropdown.berry-dropdown {
+    border-radius: 8px !important;
+    border: 1px solid var(--grey-200) !important;
+}
+
+::ng-deep .p-dropdown.berry-dropdown:not(.p-disabled).p-focus {
+    border-color: var(--primary-400) !important;
+    box-shadow: 0 0 0 3px var(--primary-50) !important;
+}

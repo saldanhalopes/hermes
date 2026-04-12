@@ -1,0 +1,97 @@
+<div class="submission-list-view px-0">
+    <!-- Header Section -->
+    <div class="row align-items-center mb-4">
+        <div class="col">
+            <h3 class="mb-0 fw-800 text-primary">Gestão de Dossiês e Submissões</h3>
+            <p class="text-muted small mb-0">Acompanhamento detalhado de variações pós-registro por mercado.</p>
+        </div>
+        <div class="col-auto d-flex gap-2">
+            <button class="btn btn-light fw-600 px-3 rounded-3 shadow-sm">
+                <i class="pi pi-download me-2"></i>Exportar
+            </button>
+            <button class="btn btn-primary fw-600 px-3 rounded-3 shadow-sm" [routerLink]="['/regulatory/new']">
+                <i class="pi pi-plus me-2"></i>Nova Submissão
+            </button>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="berry-card shadow-sm border-0 rounded-xl overflow-hidden">
+        <p-table 
+            #dt 
+            [value]="submissions" 
+            [rows]="10" 
+            [paginator]="true" 
+            [globalFilterFields]="['submissionNumber', 'title', 'authority', 'market']"
+            [rowHover]="true" 
+            dataKey="id"
+            styleClass="p-datatable-modern"
+            currentPageReportTemplate="Exibindo {first} a {last} de {totalRecords} submissões" 
+            [showCurrentPageReport]="true">
+            
+            <ng-template pTemplate="caption">
+                <div class="p-4 bg-light border-bottom d-flex align-items-center justify-content-between flex-wrap gap-3">
+                    <span class="p-input-icon-left w-100" style="max-width: 400px;">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" 
+                               (input)="dt.filterGlobal($any($event.target).value, 'contains')" 
+                               placeholder="Buscar por número, título ou mercado..." 
+                               class="form-control berry-input ps-5" />
+                    </span>
+                    <div class="d-flex gap-2">
+                        <p-button icon="pi pi-filter" [outlined]="true" severity="secondary" label="Filtros"></p-button>
+                        <p-button icon="pi pi-refresh" [outlined]="true" severity="secondary" (onClick)="loadSubmissions()"></p-button>
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="header">
+                <tr class="bg-gray-50">
+                    <th pSortableColumn="submissionNumber" class="text-xs font-bold text-gray-500 uppercase tracking-wider p-4">Número <p-sortIcon field="submissionNumber"></p-sortIcon></th>
+                    <th pSortableColumn="title" class="text-xs font-bold text-gray-500 uppercase tracking-wider p-4">Título <p-sortIcon field="title"></p-sortIcon></th>
+                    <th pSortableColumn="market" class="text-xs font-bold text-gray-500 uppercase tracking-wider p-4">Mercado <p-sortIcon field="market"></p-sortIcon></th>
+                    <th pSortableColumn="authority" class="text-xs font-bold text-gray-500 uppercase tracking-wider p-4">Autoridade <p-sortIcon field="authority"></p-sortIcon></th>
+                    <th pSortableColumn="type" class="text-xs font-bold text-gray-500 uppercase tracking-wider p-4">Tipo <p-sortIcon field="type"></p-sortIcon></th>
+                    <th pSortableColumn="status" class="text-xs font-bold text-gray-500 uppercase tracking-wider p-4 text-center">Status <p-sortIcon field="status"></p-sortIcon></th>
+                    <th pSortableColumn="submissionDate" class="text-xs font-bold text-gray-500 uppercase tracking-wider p-4">Submissão <p-sortIcon field="submissionDate"></p-sortIcon></th>
+                    <th class="text-xs font-bold text-gray-500 uppercase tracking-wider p-4 text-center">Ações</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-submission>
+                <tr class="modern-row">
+                    <td class="p-4"><span class="fw-700 text-primary">{{ submission.submissionNumber }}</span></td>
+                    <td class="p-4 small">{{ submission.title }}</td>
+                    <td class="p-4">
+                        <span class="badge-market-berry">{{ submission.market }}</span>
+                    </td>
+                    <td class="p-4 small text-muted">{{ submission.authority }}</td>
+                    <td class="p-4"><span class="extra-small fw-600 text-uppercase text-muted tracking-wider">{{ submission.type }}</span></td>
+                    <td class="p-4 text-center">
+                        <span class="status-pill" [ngClass]="getStatusClass(submission.status)">
+                            {{ submission.status }}
+                        </span>
+                    </td>
+                    <td class="p-4 small text-muted">{{ submission.submissionDate | date:'dd/MM/yyyy' }}</td>
+                    <td class="p-4">
+                        <div class="d-flex justify-content-center gap-2">
+                            <p-button icon="pi pi-eye" [text]="true" [rounded]="true" severity="primary" [routerLink]="['/regulatory', submission.id]" pTooltip="Ver Detalhes"></p-button>
+                            <p-button icon="pi pi-file-edit" [text]="true" [rounded]="true" severity="secondary" pTooltip="Editar Dossier"></p-button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="8" class="text-center p-12">
+                        <div class="flex flex-col items-center">
+                            <i class="pi pi-inbox text-5xl text-gray-200 mb-4"></i>
+                            <p class="text-gray-400 font-medium">Nenhuma submissão identificada no sistema.</p>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>

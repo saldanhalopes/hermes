@@ -1,0 +1,91 @@
+/* Berry-style Detail Page Overrides */
+.page-view-detail {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Intelligence Pulse Animation (Teal/Blue) */
+@keyframes pulse-teal {
+    0% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.4); transform: scale(1); }
+    70% { box-shadow: 0 0 0 10px rgba(20, 184, 166, 0); transform: scale(1.02); }
+    100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0); transform: scale(1); }
+}
+
+.intelligence-pulse {
+    animation: pulse-teal 2s infinite;
+    background: linear-gradient(135deg, var(--teal-500) 0%, var(--primary-500) 100%) !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+/* Status Pills */
+.status-pill {
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-pill.success { background: var(--teal-100); color: var(--teal-700); border: 1px solid var(--teal-200); }
+.status-pill.warning { background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; }
+
+/* GxP Badge */
+.gxp-badge {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--primary-50);
+    color: var(--primary-700);
+    border: 1px solid var(--primary-100);
+    font-weight: 700;
+}
+
+/* Accordion Customization */
+::ng-deep .berry-accordion .p-accordion-tab {
+    margin-bottom: 8px !important;
+    border: 1px solid var(--grey-200) !important;
+    border-radius: 8px !important;
+    overflow: hidden;
+}
+
+::ng-deep .berry-accordion .p-accordion-header .p-accordion-header-link {
+    background: white !important;
+    padding: 1.25rem !important;
+    border: none !important;
+    color: var(--grey-800) !important;
+    font-weight: 600;
+}
+
+::ng-deep .berry-accordion .p-accordion-content {
+    border: none !important;
+    padding: 0 1.25rem 1.25rem 1.25rem !important;
+    background: white !important;
+}
+
+/* Interactive Elements */
+.hover-shadow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.05) !important;
+    border-color: var(--primary-200) !important;
+}
+
+.text-teal { color: var(--teal-600); }
+.fw-700 { font-weight: 700; }
+.fw-600 { font-weight: 600; }
+.fw-500 { font-weight: 500; }
+.text-small { font-size: 0.875rem; }
+
+/* Mermaid Container */
+.mermaid-container {
+    background: var(--grey-50);
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px dashed var(--grey-300);
+    min-height: 150px;
+}

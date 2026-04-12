@@ -54,4 +54,10 @@ public class SettingsService {
             }
         });
     }
+
+    public Map<String, String> getAllSettingsAsMap() {
+        return repository.findAll().stream()
+                .collect(Collectors.toMap(SystemSetting::getSettingKey, SystemSetting::getSettingValue));
+    }
 }
+
